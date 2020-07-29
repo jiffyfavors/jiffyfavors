@@ -1,0 +1,25 @@
+{
+  "hosting": {
+    "target":"rider",
+    "predeploy":"npm run build && rm -rf public/dist/rider/* && mkdir -p public/dist/rider && cp -a ./dist/* ./public/dist/rider",
+    "public": "./public/dist/rider",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+     "headers": [{
+      "source" : "**",
+      "headers" : [{
+        "key" : "Cache-Control",
+        "value" : "public, max-age=3600, s-max-age=14400"
+      }]
+    }]
+  }
+}

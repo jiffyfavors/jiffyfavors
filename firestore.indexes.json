@@ -1,0 +1,343 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "billers",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.draft",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "g",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "billspay_request",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.area",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.rider",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.timestamp",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "billspay_request",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.rider",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.completion_time",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "billspay_request",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.rider",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.timestamp",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "billspay_request",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.rider",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "g",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "merchant",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.draft",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "g",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.area",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.rider",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.timestamp",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.assign_rider",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.delivery.date",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "g",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.assign_rider",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "g",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.delivery.date",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "g",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.rider",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.completion_time",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.rider",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.timestamp",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.rider",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "g",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "orders",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "g",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "shop_request",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.area",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.rider",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.timestamp",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "shop_request",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.rider",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.completion_time",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "shop_request",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.rider",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.timestamp",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "shop_request",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.rider",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "d.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "g",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "shops",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "d.draft",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "g",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

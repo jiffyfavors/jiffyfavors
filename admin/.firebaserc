@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "sound-aileron-279710"
+  },
+  "targets": {
+    "sound-aileron-279710": {
+      "hosting": {
+        "admin": [
+          "jf-admin"
+        ]
+      }
+    }
+  }
+}

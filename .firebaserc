@@ -1,0 +1,20 @@
+{
+  "projects": {
+    "default": "sound-aileron-279710"
+  },
+  "targets": {
+    "sound-aileron-279710": {
+      "hosting": {
+        "client": [
+          "sound-aileron-279710"
+        ],
+        "rider": [
+          "fudtripsrider"
+        ],
+        "admin": [
+          "jf-admin"
+        ]
+      }
+    }
+  }
+}

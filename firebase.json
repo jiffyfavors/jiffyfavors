@@ -1,0 +1,111 @@
+{
+  "functions": {
+    "source": "functions/",
+    "predeploy": [
+      "npm --prefix  ./client run build && rm -rf functions/nuxt && cp -r ./client/nuxt/ functions/nuxt && cp client/nuxt.config.js functions/"
+    ]
+  },
+  "hosting": [
+    {
+      "public": "public/client",
+      "target": "client",
+      "predeploy": [
+        "rm -rf client/public/client/* && mkdir -p public/client/_nuxt && cp -a client/nuxt/dist/client/. public/client/_nuxt && cp -a ./client/static/. public/client/"
+      ],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "redirects": [
+        {
+          "source": "/distance/:payload*",
+          "destination": "https://maps.googleapis.com/maps/api/distancematrix/json/distance/:payload",
+          "type": 301
+        }
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "function": "nuxtssr",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=3600, s-maxage=14400"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "rider",
+      "predeploy": "npm --prefix  ./rider run build && rm -rf public/rider/* && mkdir -p public/rider && cp -a ./rider/dist/* ./public/rider",
+      "public": "./public/rider",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=3600, s-max-age=14400"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "admin",
+      "predeploy": "npm --prefix  ./admin run build && rm -rf public/admin/* && mkdir -p public/admin && cp -a ./admin/dist/* ./public/admin",
+      "public": "./public/admin",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=3600, s-max-age=14400"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "hosting": {
+      "port": 5000
+    },
+    "ui": {
+      "enabled": true,
+      "port": 5002
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}
