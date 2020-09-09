@@ -53,13 +53,17 @@
                     <v-content v-if="isHide">
                         <v-layout wrap justify-center align-center text-left>
                             <v-flex xs12 md4 sm4 lg3 class="text-center">
-                                <v-icon class="mb-2" color="error" size="200"> mdi-map-marker </v-icon>
-                                <blockquote class="blockquote mb-5">
-                                    <span style="font-size:50px;">&#128546;</span>
-                                    <h4>No Stores in Your Location</h4> </blockquote>
-                                <footer>
-                                    <v-btn outlined text block color="red" @click.stop="coordiag = true"> Select Location </v-btn>
-                                </footer>
+                                <div class="mapcontainer">
+                                    <GMap id="gmap" ref="gMap" :center="mylocation" :options="{
+                fullscreenControl: false,
+                streetViewControl: false,
+                mapTypeControl: true,
+                zoomControl: true,
+                gestureHandling: 'greedy'
+              }" :zoom="15" @center_changed="centerChange">
+                                        <GMapMarker ref="gmapmarker" :position="mylocation" :options="{ icon: selectedmarker }" /> </GMap>
+                                </div>
+                                <v-btn color="blue darken-1" text class="white--text mt-5" block outlined @click="updateMapLocation"> Find Restaurant </v-btn>
                             </v-flex>
                         </v-layout>
                     </v-content>
@@ -80,27 +84,6 @@
                 </v-container>
             </v-sheet>
         </v-card>
-        <v-bottom-sheet v-model="coordiag" persistent max-width="400px">
-            <v-card>
-                <v-card-title primary-title> Confirmed Location </v-card-title>
-                <v-card-text>
-                    <div class="mapcontainer">
-                        <GMap id="gmap" ref="gMap" :center="mylocation" :options="{
-                fullscreenControl: false,
-                streetViewControl: false,
-                mapTypeControl: true,
-                zoomControl: true,
-                gestureHandling: 'greedy'
-              }" :zoom="15" @center_changed="centerChange">
-                            <GMapMarker ref="gmapmarker" :position="mylocation" :options="{ icon: selectedmarker }" /> </GMap>
-                    </div>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn color="blue darken-1" text class="white--text" block outlined @click="updateMapLocation"> Find Store </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-bottom-sheet>
         <v-row justify="center">
             <v-bottom-sheet v-model="moreBS" v-if="moreTab.length" inset scrollable max-width="400">
                 <v-card>
@@ -108,7 +91,7 @@
                     <v-divider></v-divider>
                     <v-card-text style="height: 300px;">
                         <v-list dense>
-                            <v-list-item v-for="item in moreTab" :key="item.name"  @click="addItem(item)">
+                            <v-list-item v-for="item in moreTab" :key="item.name" @click="addItem(item)">
                                 <v-list-item-title> {{ item.name }}</v-list-item-title>
                                 <v-divider></v-divider>
                             </v-list-item>
@@ -184,7 +167,6 @@ export default {
             if (this.tags.length > 5) {
                 this.initialTab = clonedeep(this.tags).splice(0, 3)
                 this.moreTab = clonedeep(this.tags).splice(4, this.tags.length - 1)
-               
             }
         },
         currentItem() {
@@ -196,30 +178,39 @@ export default {
         }
     },
     mounted() {
-        this.$getLocation({
-            enableHighAccuracy: true,
-            timeout: 10000
-        }).then(
-            (coordinates) => {
-                console.log(coordinates)
-                if (coordinates.accuracy < 500) {
-                    this.findStores({
-                        lat: coordinates.lat,
-                        lng: coordinates.lng
+        if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition(() => {
+                this.$getLocation({
+                    enableHighAccuracy: true,
+                    timeout: 10000
+                }).then(
+                    (coordinates) => {
+                        if (coordinates.accuracy < 500) {
+                            this.findStores({
+                                lat: coordinates.lat,
+                                lng: coordinates.lng
+                            })
+                        } else {
+                            this.isLoading = false
+                            this.isHide = true
+                        }
+                    }, (error) => {
+                        console.log(error)
+                        this.isLoading = false
+                        this.isHide = true
                     })
-                } else {
-                    this.isLoading = false
-                    this.isHide = true
-                }
-            }, (error) => {
-                console.log(error)
+            }, () => {
                 this.isLoading = false
                 this.isHide = true
-            })
+            });
+        } else {
+            this.isLoading = false
+            this.isHide = true
+        }
     },
-
     methods: {
         addItem(item) {
+              window.scrollTo(0,0);
             const removed = this.initialTab.splice(0, 1)
             this.initialTab.push(...this.moreTab.splice(this.moreTab.indexOf(item), 1))
             this.moreTab.push(...removed)
@@ -227,6 +218,8 @@ export default {
                 this.moreBS = false
                 this.currentItem = 'tab-' + item.name
                 this.moreTab = this.moreTab.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+
+
             })
         },
         findStores(coordinates) {
@@ -241,7 +234,6 @@ export default {
                 this.isLoading = false
                 this.isHide = false
                 this.coordiag = false
-
             })
         },
         centerChange() {
@@ -265,13 +257,13 @@ export default {
                     let resto = clonedeep(this.resto.filter((a) => a.tags.includes(item)))
                     let featured = shuffle(resto.filter((a) => a.rates.cr > 0))
                     let notFeatured = shuffle(resto.filter((a) => a.rates.cr == 0))
-                    return featured.concat(notFeatured)
+                    return featured.concat(notFeatured.sort((a, b) => a.draft - b.draft))
                 }
                 else {
                     let resto = clonedeep(this.resto)
                     let featured = shuffle(resto.filter((a) => a.rates.cr > 0))
                     let notFeatured = shuffle(resto.filter((a) => a.rates.cr == 0))
-                    return featured.concat(notFeatured)
+                    return featured.concat(notFeatured.sort((a, b) => a.draft - b.draft))
                 }
             } catch (e) {
                 return []
@@ -282,16 +274,5 @@ export default {
             console.log(c, item)
         }
     }
-}
+};
 </script>
-<style scoped>
-    .cardhyt {
-    height: 90vh;
-  }
-  
-  .GMap,
-  .GMap__Wrapper {
-      height: calc(90vh - 100px);
-      margin-top: 10px;
-    }
-</style>

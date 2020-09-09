@@ -11,5 +11,5 @@ export default {
      mounted(){
     	this.$fireAnalytics.logEvent('page_view')
     }
-}
+};
 </script>

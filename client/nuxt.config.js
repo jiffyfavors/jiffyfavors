@@ -1,6 +1,10 @@
 module.exports = {
   mode: 'universal',
   parallel: true,
+  // server:{
+  //   host: '0.0.0.0',
+  //   port: 8000
+  // },
   pwa: {
     meta: { viewport: 'width=device-width, initial-scale=1, user-scalable=no' },
     manifest: {
@@ -12,7 +16,7 @@ module.exports = {
       orientation: 'portrait',
       description: 'Food Delivery, Bills Payment and Virtual Shopping',
       background_color: '#ffff',
-      theme_color:'#00aff0',
+      theme_color: '#00aff0',
       icons: [
         {
           src: '/icon.png',
@@ -32,7 +36,6 @@ module.exports = {
       ]
     }
   },
-
   head: {
     titleTemplate: '%s - ' + process.env.npm_package_long_name,
     title: process.env.npm_package_long_name || '',
@@ -69,7 +72,6 @@ module.exports = {
    ** Customize the progress-bar color
    */
   loading: '~/components/Loading.vue',
-
   /*
    ** Global CSS
    */
@@ -81,7 +83,7 @@ module.exports = {
     '~/plugins/main',
     { src: '~/plugins/localStorage.js', ssr: false },
     { src: '~/plugins/fns.js', mode: 'client' },
-      { src: '~/plugins/ga.js', mode: 'client' }
+    { src: '~/plugins/ga.js', mode: 'client' }
   ],
   /*
    ** Nuxt.js dev-modules
@@ -114,12 +116,13 @@ module.exports = {
           messagingSenderId: '953894101400',
           appId: '1:953894101400:web:c06b9af64f518a17f14bed',
           measurementId: 'G-RLCD9YBDHX',
-          fcmPublicVapidKey:'BMoNvS6eRymi6FLK_wyxXPs5AMR_s67WiBSZMM1Re3-Amh3dpP_BwhbMZqMkUiNc6HjXQwjxJBTF83m1yjGka7s'
+          fcmPublicVapidKey:
+            'BMoNvS6eRymi6FLK_wyxXPs5AMR_s67WiBSZMM1Re3-Amh3dpP_BwhbMZqMkUiNc6HjXQwjxJBTF83m1yjGka7s'
         },
         onFirebaseHosting: true,
         services: {
           analytics: true,
-          functions:true,
+          functions: true,
           storage: true,
           firestore: {
             memoryOnly: false,
@@ -136,7 +139,6 @@ module.exports = {
       }
     ]
   ],
-
   axios: {
     proxy: true,
     baseUrl: '/'
@@ -150,7 +152,6 @@ module.exports = {
       changeOrigin: true
     }
   },
-
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
@@ -169,7 +170,6 @@ module.exports = {
     }
   },
   buildDir: 'nuxt',
-
   /*
    ** Build configuration
    */

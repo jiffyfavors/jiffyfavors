@@ -36,7 +36,14 @@ export const getters = {
     return state.area
   },
   getCurrentJobCount(state) {
-    return (state.acceptedjobs.food.length + state.acceptedjobs.billspay.length + state.acceptedjobs.shop.length)
+    try{
+       return (state.acceptedjobs.food.length + state.acceptedjobs.billspay.length + state.acceptedjobs.shop.length)
+    }
+    catch(e){
+      console.log(e)
+      return 0
+    }
+   
   },
   getLocation(state) {
     return state.location

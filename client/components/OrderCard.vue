@@ -49,6 +49,16 @@
                     </v-flex>
                     <v-flex xs4 sm4 md4 class="text-end"> {{ (item.amount.delivery.platform + item.amount.delivery.rider + item.amount.sc.markup) | toPHP }} </v-flex>
                     <v-divider />
+                    <v-flex xs8 sm8 md8 v-if="computeDeduction.amount>0">
+                        <span class="subheading">
+                            <strong>Discount {{computeDeduction. text}}</strong>
+                        </span>
+                    </v-flex>
+                    <v-flex xs4 sm4 md4 v-if="computeDeduction.amount>0">
+                        <div class="ml-2 red--text">
+                            <strong>{{ computeDeduction.amount | toPHP }}</strong>
+                        </div>
+                    </v-flex>
                     <v-flex xs8 sm8 md8>
                         <span class="subheading">
                             <strong>Total</strong>
@@ -56,7 +66,7 @@
                     </v-flex>
                     <v-flex xs4 sm4 md4>
                         <div class="ml-2 red--text">
-                            <strong>{{ item.amount.grandtotal | toPHP }}</strong>
+                            <strong>{{ item.amount.grandtotal - computeDeduction.amount | toPHP }}</strong>
                         </div>
                     </v-flex>
                 </v-layout>
@@ -303,7 +313,23 @@ export default {
     computed: {
         df() {
             return this.$store.getters['admin/getFare']
-        }
+        },
+        computeDeduction() {
+            let discount = 0;
+            let discountText = ''
+            if (this.item.amount.hasOwnProperty('deduction')) {
+                if (this.item.amount.deduction.charged_to === 'merchant') {
+                    discount = discount + this.item.amount.deduction.computed
+                } else if (this.item.amount.deduction.charged_to === 'platform') {
+                    discount = discount + this.item.amount.deduction.computed
+                }
+                discountText = this.item.amount.deduction.code + '-' + this.item.amount.deduction.value
+            }
+            return {
+                text: discountText,
+                amount: discount 
+            }
+        },
     },
     mounted() {
         if (this.item.rider !== 'unassigned') {
@@ -455,7 +481,7 @@ export default {
                     if (distance_actual <= md) rider_df = fixed_rider_fee
                     else rider_df = fixed_rider_fee + ((distance_actual - md) * rider)
                     rider_df = Math.floor(rider_df)
-                  let  platform_df = Math.floor(df - rider_df)
+                    let platform_df = Math.floor(df - rider_df)
                     const total = parseFloat(this.item.amount.order_value) + rider_df + platform_df + parseFloat(this.item.amount.sc.markup)
                     let update_data = cloneDeep(this.item)
                     delete update_data.id

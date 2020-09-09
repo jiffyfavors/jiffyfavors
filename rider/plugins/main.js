@@ -4,6 +4,11 @@ import { firestorePlugin } from 'vuefire'
 import VueToast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-default.css';
 import mixins from '../mixins/index.js'
+import vue2Dropzone from 'vue2-dropzone'
+import 'vue2-dropzone/dist/vue2Dropzone.min.css'
+Vue.component('vuedropzone', vue2Dropzone)
+
+
 
 Vue.mixin(mixins)
 

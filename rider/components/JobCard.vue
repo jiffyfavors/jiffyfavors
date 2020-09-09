@@ -4,40 +4,6 @@
             <span class="bestseller">{{ item.id}}</span>
             <v-card-text>
                 <v-expansion-panels popout>
-                    <v-expansion-panel dense v-if="item.status!='completed'">
-                        <v-expansion-panel-header> {{item.order.items.length}} {{ item.order.items.length>1 ? 'Order Items':'Order Item'}}</v-expansion-panel-header>
-                        <v-expansion-panel-content>
-                            <v-list dense>
-                                <v-list-item-group v-for="(i, index) in item.order.items" :key="index">
-                                    <v-list-item>
-                                        <v-list-item-avatar v-if="i.info.img!=''" tile color="grey darken-3">
-                                            <v-img class="elevation-6" :src="i.info.img"></v-img>
-                                        </v-list-item-avatar>
-                                        <v-list-item-content>
-                                            <v-list-item-title>{{i.info.name}} x {{ i.qty }}</v-list-item-title>
-                                            <v-simple-table dense>
-                                                <template v-slot:default>
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="text-left">Option</th>
-                                                            <th class="text-left">Value</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr v-for="addon in  computeAddOns(i.add_ons)" :key="addon.name">
-                                                            <td>{{ addon.name }}</td>
-                                                            <td>{{ addon.values }}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </template>
-                                            </v-simple-table>
-                                            <v-alert type="info" v-if="i.instructions.length>0" dense>{{i.instructions}}</v-alert>
-                                        </v-list-item-content>
-                                    </v-list-item>
-                                    <v-divider v-if="index <=item.order.items" :key="`divide_`+index" /> </v-list-item-group>
-                            </v-list>
-                        </v-expansion-panel-content>
-                    </v-expansion-panel>
                     <v-expansion-panel>
                         <v-expansion-panel-header>Breakdown</v-expansion-panel-header>
                         <v-expansion-panel-content>
@@ -46,13 +12,13 @@
                                     <strong>Collect Cash</strong>
                                 </v-flex>
                                 <v-flex xs4 sm4 md4>
-                                    <strong>{{ item.amount.grandtotal|toPHP }}</strong>
+                                    <strong>{{ computeDeduction.total|toPHP }}</strong>
                                 </v-flex>
                                 <v-flex xs8 sm8 md8>
                                     <strong>For Merchant</strong>
                                 </v-flex>
                                 <v-flex xs4 sm4 md4>
-                                    <strong>- {{ item.amount.order_value - item.amount.sc.store|toPHP }}</strong>
+                                    <strong>- {{computeDeduction.merchant|toPHP }}</strong>
                                 </v-flex>
                                 <v-flex xs8 sm8 md8>
                                     <strong>Balance Deduction </strong>
@@ -130,6 +96,7 @@
                         </v-expansion-panel-content>
                     </v-expansion-panel>
                 </v-expansion-panels>
+                <v-btn block @click.stop="listDiag = true"> {{item.order.items.length}} {{ item.order.items.length>1 ? 'View Items':'View Item'}}</v-btn>
                 <v-list-item dense class="grow" v-if="item.status!='completed'">
                     <v-list-item-avatar color="grey darken-3">
                         <v-img class="elevation-6" :src="item.order.merchant.logo"></v-img>
@@ -171,6 +138,66 @@
                 </v-list-item-group>
             </v-list>
         </v-bottom-sheet>
+        <v-dialog fullscreen v-model="listDiag" max-widht="500px">
+            <v-card width="100%">
+                <v-app-bar app fixed dark color="#00aff0">
+                    <v-btn icon @click.stop="listDiag = false">
+                        <v-icon> mdi-arrow-left-bold</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>List of Orders for {{item.id}}</v-toolbar-title>
+                </v-app-bar>
+                <v-card-text>
+                    <v-sheet class="overflow-y-auto">
+                        <v-content>
+                            <v-list two-line>
+                                <v-list-item-group v-for="(_item, index) in item.order.items" :key="_item.index">
+                                    <v-divider />
+                                    <v-list-item dense>
+                                        <v-list-item-avatar color="grey darken-3">
+                                            <v-img v-if="_item.info.img != ''" class="elevation-6" :src="_item.info.img" />
+                                            <v-avatar v-else class="white--text" color="blue"> {{ _item.info.name .match(/\b(\w)/g) .join('') .substr(0, 2) }} </v-avatar>
+                                        </v-list-item-avatar>
+                                        <v-list-item-content>
+                                            <v-list-item-title v-text="_item.info.name" />
+                                            <v-list-item-subtitle class="red--text"> {{ computeTotal(_item) | toPHP }} </v-list-item-subtitle>
+                                        </v-list-item-content>
+                                        <v-list-item-action>
+                                            <v-list-item-action-text> {{ (computeTotal(_item) / _item.qty) | toPHP }} x {{ _item.qty }} </v-list-item-action-text>
+                                        </v-list-item-action>
+                                    </v-list-item>
+                                    <v-simple-table dense v-if="computeAddOns(
+                                _item.add_ons,
+                                _item.info.base_price
+                              ).length>0">
+                                        <template #default>
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-left"> Item </th>
+                                                    <th class="text-left"> Value </th>
+                                                    <th class="text-left"> Price </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(addon, i) in computeAddOns(
+                                _item.add_ons,
+                                _item.info.base_price
+                              )" :key="addon.name + `_` + i + `_` + index">
+                                                    <td>{{ addon.name }}</td>
+                                                    <td>{{ addon.values }}</td>
+                                                    <td v-if="addon.price>0">{{ addon.price | toPHP }}</td>
+                                                    <td v-if="addon.price<1">-</td>
+                                                </tr>
+                                            </tbody>
+                                        </template>
+                                    </v-simple-table>
+                                    <v-alert type="info" v-if="_item.instructions.length>0" dense>{{_item.instructions}}</v-alert>
+                                </v-list-item-group>
+                            </v-list>
+                        </v-content>
+                    </v-sheet>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
         <v-bottom-sheet v-model="beforeCommitDiag" persistent>
             <v-card>
                 <v-card-title primary-title> {{status.text}} </v-card-title>
@@ -205,7 +232,9 @@ export default {
     },
     data() {
         return {
+            listDiag: false,
             timer: 0,
+            total: 0,
             isCommit: false,
             beforeCommitDiag: false,
             actionSheet: false,
@@ -220,6 +249,25 @@ export default {
         if (this.item.status != 'completed') this.status = this.statuses[0]
     },
     computed: {
+        computeDeduction() {
+            let merchant = this.item.amount.order_value
+            let total = this.item.amount.grandtotal
+            if (this.item.amount.hasOwnProperty('deduction')) {
+                if (this.item.amount.deduction.charged_to === 'merchant') {
+                    merchant = merchant - this.item.amount.deduction.computed
+                    total = total - this.item.amount.deduction.computed
+                } else if (this.item.amount.deduction.charged_to === 'platform') {
+                    total = total - this.item.amount.deduction.computed
+                }
+            }
+            if (this.item.amount.sc.store > 0) {
+                merchant = merchant - this.item.amount.sc.store
+            }
+            return {
+                merchant: merchant,
+                total: total
+            }
+        },
         statuses() {
             return [{
                 icon: 'mdi-pencil',
@@ -344,10 +392,14 @@ Thank you'`
             })
         },
         updateBalance() {
-            const firestore = this.$fireStoreObj()
-            firestore.collection('riders').doc(this.$store.getters['auth/getUser'].id).update({
-                'd.balance': this.$fireStoreObj.FieldValue.increment(this.balance * -1)
-            })
+           
+
+            this.$fireStoreObj().collection('riders').doc(this.$store.getters['auth/getUser'].id).collection('balances').add({
+                desc:'Hold-Balance: Commission Fee',
+                amount: this.balance * -1,
+                timestamp: new Date().getTime()
+              })
+
         },
         openMap() {
             const coord = this.$store.getters['rider/getLocation']
@@ -375,27 +427,46 @@ Thank you'`
             })
             return total
         },
-        computeAddOns(item) {
-            const txt = []
-            for (const [key, value] of Object.entries(item)) {
-                if (Array.isArray(value)) {
-                    var vals = ''
-                    value.forEach((a) => {
-                        vals = vals + this.capitalize(a.name) + ','
+        computeAddOns(item, price) {
+            const ads = []
+            const capitalize = (str, lower = false) => (lower ? str.toLowerCase() : str).replace(/(?:^|\s|["'([{])+\S/g, (match) => match.toUpperCase())
+            ads.push({
+                name: 'Base Price',
+                values: '',
+                price
+            })
+            let total = parseFloat(price)
+            Object.entries(item).map(([key, val]) => {
+                if (Array.isArray(val)) {
+                    ads.push({
+                        name: capitalize(key),
+                        values: '',
+                        price: 0
                     })
-                    txt.push({
-                        name: this.capitalize(key),
-                        values: vals.substring(0, vals.length - 1)
+                    val.forEach((i) => {
+                        total = total + parseFloat(i.price)
+                        ads.push({
+                            name: '',
+                            values: i.name,
+                            price: i.price
+                        })
                     })
                 } else {
-                    txt.push({
-                        name: this.capitalize(key),
-                        values: this.capitalize(value.name)
+                    total = total + parseFloat(val.price)
+                    ads.push({
+                        name: capitalize(key),
+                        values: val.name,
+                        price: val.price
                     })
                 }
-            }
-            return txt
-        }
+            })
+            ads.push({
+                name: '',
+                values: 'Total',
+                price: parseFloat(total)
+            })
+            return ads
+        },
     },
 }
 </script>

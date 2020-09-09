@@ -84,22 +84,43 @@
                                             <v-flex xs8 sm8 md8> Delivery Fee -
                                                 <small> {{ checkoutPayload.delivery.distance.computed }} km </small>
                                             </v-flex>
-                                            <v-flex xs4 sm4 md4 class="text-end"> {{ (checkoutPayload.amount.delivery.platform + checkoutPayload.amount.delivery.rider + checkoutPayload.amount.sc.markup) | toPHP }} </v-flex>
-                                            <!--  <v-flex xs8 sm8 md8> Convenience Fee
-                                                <v-tooltip v-model="showtooltip" bottom>
-                                                    <template #activator="{ on, attrs }">
-                                                        <v-icon color="blue" small v-bind="attrs" @click="showtooltip = !showtooltip" v-on="on"> mdi-alert-circle-outline </v-icon>
-                                                    </template>
-                                                    <span> We charging certain amount base on your total order value in order for us to maintain and improve our service. </span>
-                                                </v-tooltip>
-                                            </v-flex>
-                                            <v-flex xs4 sm4 md4> {{ checkoutPayload.amount.sc.markup | toPHP }} </v-flex> -->
-                                            <v-divider />
+                                            <v-flex xs4 sm4 md4 class="text-end"> {{ (checkoutPayload.amount.delivery.platform + checkoutPayload.amount.delivery.rider) | toPHP }} </v-flex>
+                                            <v-flex xs8 sm8 md8> Convenience Fee </v-flex>
+                                            <v-flex xs4 sm4 md4 class="text-end"> {{ checkoutPayload.amount.sc.markup |toPHP}} </v-flex>
+                                              <v-divider></v-divider>
                                             <v-flex xs8 sm8 md8>
-                                                <span class="subheading">Total</span>
+                                                <v-text-field text append-icon="mdi-ticket-percent" v-model="promoCode" solo dense small class="mr-2" placeholder="Promo Code" label="Promo Code"></v-text-field>
                                             </v-flex>
+                                          
                                             <v-flex xs4 sm4 md4>
-                                                <div class="ml-2 red--text"> {{ checkoutPayload.amount.grandtotal | toPHP }} </div>
+                                                <v-btn outlined color="green" @click.stop="findVoucher()">Apply</v-btn>
+                                            </v-flex>
+                                            <v-flex xs8 sm8 md8 v-if="promoCodeStatus.accepted" class="subtitle-2">Discount - {{promoCodeStatus.status.code}} </v-flex>
+                                            <v-flex xs4 sm4 md4 v-if="promoCodeStatus.accepted"> {{promoCodeStatus.status.value }} </v-flex>
+                                            <v-flex xs8 sm8 md8 v-if="promoCodeStatus.accepted">
+                                                <span class="subheading">Subtotal</span>
+                                            </v-flex>
+                                            <v-flex xs4 sm4 md4 v-if="promoCodeStatus.accepted"> {{ checkoutPayload.amount.grandtotal | toPHP }} </v-flex>
+                                            <v-flex xs8 sm8 md8 class="subtitle-2" v-if="promoCodeStatus.accepted"> Amount </v-flex>
+                                            <v-flex xs4 sm4 md4 v-if="promoCodeStatus.accepted"> - {{promoCodeStatus.status.computed|toPHP}} </v-flex>
+                                            <v-flex xs12 v-if="promoCodeStatus.accepted == false">
+                                                <v-alert type="error">{{promoCodeStatus.status}}</v-alert>
+                                            </v-flex>
+                                            <v-flex xs8 sm8 md8 v-if="!promoCodeStatus.accepted">
+                                                <span class="subheading">Grandtotal</span>
+                                            </v-flex>
+                                            <v-flex xs4 sm4 md4 v-if="!promoCodeStatus.accepted">
+                                                <div class="ml-2 red--text">
+                                                    <strong>{{ checkoutPayload.amount.grandtotal | toPHP }}</strong>
+                                                </div>
+                                            </v-flex>
+                                            <v-flex xs8 sm8 md8 v-if="promoCodeStatus.accepted">
+                                                <span class="subheading">Grandtotal</span>
+                                            </v-flex>
+                                            <v-flex xs4 sm4 md4 v-if="promoCodeStatus.accepted">
+                                                <div class="ml-2 red--text">
+                                                    <strong>{{ checkoutPayload.amount.grandtotal - promoCodeStatus.status.computed | toPHP }}</strong>
+                                                </div>
                                             </v-flex>
                                             <v-list nav outlined tile width="100%" dense>
                                                 <v-divider />
@@ -182,6 +203,7 @@
                                                     </v-list-item-action>
                                                 </v-list-item>
                                                 <v-divider /> </v-list>
+                                            <v-alert type="info">We accept CASH on Delivery, GCASH, Paymaya, Coins.ph. Your rider will instruct you how to Pay on non COD payment.</v-alert>
                                         </v-layout>
                                         <v-btn block color="red" class="shopresponsive" outlined @click="confirmOrder()"> Confirm Order </v-btn>
                                     </v-card-text>
@@ -191,113 +213,116 @@
                     </v-container>
                 </v-content>
             </v-sheet>
-            <v-bottom-sheet v-model="addressDiag" scrollable>
-                <v-card tile height="600px">
-                    <v-card-title primary-title> Delivery Address </v-card-title>
-                    <v-card-text>
-                        <v-flex xs12 md12 sm12>
-                            <v-textarea v-model="checkoutPayload.delivery.to.address" a hint="Pls type 'NA' if not applicable" label="Address" outlined placeholder="Address" /> </v-flex>
-                        <v-flex xs12 md12 sm12>
-                            <v-text-field v-model="checkoutPayload.delivery.to.unit" a hint="Pls type 'NA' if not applicable" label="Floor/Unit/Room No." persistent-hint outlined /> </v-flex>
-                        <v-flex xs12 md12 sm12>
-                            <v-textarea v-model="checkoutPayload.delivery.to.rider_note" hint="Pls type 'NA' if not applicable" label="Note to rider" outlined placeholder="eg. Landmark/ Building" /> </v-flex>
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-spacer />
-                        <v-btn tile outlined color="red" @click="addressDiag = false"> Apply Changes </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-bottom-sheet>
-            <v-bottom-sheet v-model="timediag" persistent>
-                <v-card>
-                    <v-card-title>
-                        <span class="headline">Delivery Date & Time</span>
-                    </v-card-title>
-                    <v-card-text>
-                        <v-container>
-                            <v-layout wrap>
-                                <v-flex xs12 md6 lg6 sm6>
-                                    <v-select v-model="delivery_date" flat :items="dates" return-object label="Delivery Date">
-                                        <template #selection="data"> {{ data.item.label }}, {{ data.item.day_name }} {{ data.item.name }} {{ data.item.day }} </template>
-                                        <template #item="data"> {{ data.item.label }}, {{ data.item.day_name }} {{ data.item.name }} {{ data.item.day }} </template>
-                                    </v-select>
-                                </v-flex>
-                                <v-flex xs12 md6 lg6 sm6>
-                                    <v-select v-model="checkoutPayload.delivery.time" flat :items="delivery_date.delivery_time" label="Delivery Time" /> </v-flex>
-                            </v-layout>
-                        </v-container>
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-spacer />
-                        <v-btn color="blue darken-1" text @click="timediag = false"> Save </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-bottom-sheet>
-            <v-bottom-sheet v-model="mapSheet" inset>
-                <v-card flat width="100%">
-                    <v-card-title>Select Delivery Location</v-card-title>
-                    <v-card-text>
-                        <div class="mapcontainer">
-                            <GMap id="gmap" ref="gMap" :center="location" :options="{
+            <v-row justify="center">
+                <v-bottom-sheet v-model="addressDiag" scrollable>
+                    <v-card tile height="600px">
+                        <v-card-title primary-title> Delivery Address </v-card-title>
+                        <v-card-text>
+                            <v-flex xs12 md12 sm12>
+                                <v-textarea v-model="checkoutPayload.delivery.to.address" a hint="Pls type 'NA' if not applicable" label="Address" outlined placeholder="Address" /> </v-flex>
+                            <v-flex xs12 md12 sm12>
+                                <v-text-field v-model="checkoutPayload.delivery.to.unit" a hint="Pls type 'NA' if not applicable" label="Floor/Unit/Room No." persistent-hint outlined /> </v-flex>
+                            <v-flex xs12 md12 sm12>
+                                <v-textarea v-model="checkoutPayload.delivery.to.rider_note" hint="Pls type 'NA' if not applicable" label="Note to rider" outlined placeholder="eg. Landmark/ Building" /> </v-flex>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer />
+                            <v-btn tile outlined color="red" @click="addressDiag = false"> Apply Changes </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-bottom-sheet>
+                <v-bottom-sheet v-model="timediag" width="500px" persistent>
+                    <v-card>
+                        <v-card-title>
+                            <span class="headline">Delivery Date & Time</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-container>
+                                <v-layout wrap>
+                                    <v-flex xs12 md6 lg6 sm6>
+                                        <v-select v-model="delivery_date" flat :items="dates" return-object label="Delivery Date">
+                                            <template #selection="data"> {{ data.item.label }}, {{ data.item.day_name }} {{ data.item.name }} {{ data.item.day }} </template>
+                                            <template #item="data"> {{ data.item.label }}, {{ data.item.day_name }} {{ data.item.name }} {{ data.item.day }} </template>
+                                        </v-select>
+                                    </v-flex>
+                                    <v-flex xs12 md6 lg6 sm6>
+                                        <v-select v-model="checkoutPayload.delivery.time" flat :items="delivery_date.delivery_time" label="Delivery Time" /> </v-flex>
+                                </v-layout>
+                            </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer />
+                            <v-btn color="blue darken-1" text @click="timediag = false"> Save </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-bottom-sheet>
+                <v-bottom-sheet v-model="mapSheet" inset>
+                    <v-card flat>
+                        <v-card-title>Select Delivery Location</v-card-title>
+                        <v-card-text>
+                            <div class="mapcontainer">
+                                <GMap id="gmap" ref="gMap" :center="location" :options="{
                   fullscreenControl: false,
                   streetViewControl: false,
                   mapTypeControl: false,
                   zoomControl: true,
                   gestureHandling: 'greedy'
                 }" :zoom="15" @center_changed="centerChange">
-                                <GMapMarker ref="gmapmarker" :position="location" :options="{ icon: selectedmarker }" /> </GMap>
-                        </div>
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-btn color="red" block outlined @click.stop="preCheckout"> Set Delivery Location </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-bottom-sheet>
-            <v-bottom-sheet v-model="moneydiag" persistent>
-                <v-card>
-                    <v-card-title>
-                        <span class="headline">Your money</span>
-                    </v-card-title>
-                    <v-card-text>
-                        <v-layout wrap>
-                            <v-flex xs12 md12 sm12>
-                                <v-text-field v-model="checkoutPayload.amount.money" right type="number" dense solo label="Your Money" outlined placeholder="Your Money" /> </v-flex>
-                        </v-layout>
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-spacer />
-                        <v-btn tile outlined :disabled="
-                checkoutPayload.amount.money < checkoutPayload.amount.grandtotal
+                                    <GMapMarker ref="gmapmarker" :position="location" :options="{ icon: selectedmarker }" /> </GMap>
+                            </div>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-btn color="red" block outlined @click.stop="preCheckout"> Set Delivery Location </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-bottom-sheet>
+                <v-bottom-sheet v-model="moneydiag" width="500px" persistent>
+                    <v-card>
+                        <v-card-title>
+                            <span class="headline">Your money</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-layout wrap>
+                                <v-flex xs12 md12 sm12>
+                                    <v-text-field v-model="checkoutPayload.amount.money" right type="number" dense solo label="Your Money" outlined placeholder="Your Money" /> </v-flex>
+                            </v-layout>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer />
+                            <v-btn tile outlined :disabled="
+                checkoutPayload.amount.money < checkoutPayload.amount.grandtotal - promoCodeStatus.value
               " color="red" @click="moneydiag = false"> Apply Changes </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-bottom-sheet>
-            <v-bottom-sheet v-model="authDiag">
-                <v-card flat>
-                    <v-card-title>Contact Info</v-card-title>
-                    <v-card-text>
-                        <fire-ui /> </v-card-text>
-                </v-card>
-            </v-bottom-sheet>
-            <v-bottom-sheet v-model="tipdiag" persistent>
-                <v-card>
-                    <v-card-title>
-                        <span class="headline">Rider Tip</span>
-                    </v-card-title>
-                    <v-card-text>
-                        <v-layout wrap>
-                            <v-flex xs12 md12 sm12>
-                                <v-text-field v-model="checkoutPayload.amount.tip" right type="number" dense solo label="Rider Tip" outlined placeholder="Amount of tip" /> </v-flex>
-                        </v-layout>
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-spacer />
-                        <v-btn tile outlined :disabled="checkoutPayload.amount.tip < 0" color="red" @click="tipdiag = false"> Apply Changes </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-bottom-sheet>
+                        </v-card-actions>
+                    </v-card>
+                </v-bottom-sheet>
+                <v-bottom-sheet v-model="authDiag">
+                    <v-card flat>
+                        <v-card-title>Contact Info</v-card-title>
+                        <v-card-text>
+                            <fire-ui /> </v-card-text>
+                    </v-card>
+                </v-bottom-sheet>
+                <v-bottom-sheet v-model="tipdiag" width="500px" persistent>
+                    <v-card>
+                        <v-card-title>
+                            <span class="headline">Rider Tip</span>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-layout wrap>
+                                <v-flex xs12 md12 sm12>
+                                    <v-text-field v-model="checkoutPayload.amount.tip" right type="number" dense solo label="Rider Tip" outlined placeholder="Amount of tip" /> </v-flex>
+                            </v-layout>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-spacer />
+                            <v-btn tile outlined :disabled="checkoutPayload.amount.tip < 0" color="red" @click="tipdiag = false"> Apply Changes </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-bottom-sheet>
+            </v-row>
             <v-snackbar v-model="snackbar" color="blue" :timeout="3000"> Item removed from cart </v-snackbar>
             <v-card class="shopresponsive" v-if="!isHide && cartSize > 0" width="100%">
+                <permission></permission>
                 <v-divider />
                 <v-list-item dense>
                     <v-list-item-avatar color="grey darken-3">
@@ -316,7 +341,7 @@
                             <span class="caption grey--text">Total</span>
                             <span class="red--text subtitle-2">{{ grandtotal | toPHP }}</span>
                         </v-list-item-action-text>
-                        <v-btn color="red" small outlined @click.stop="mapSheet = true"> Checkout </v-btn>
+                        <v-btn color="red" small outlined @click.stop="initCheckout()"> Checkout </v-btn>
                     </v-list-item-action>
                 </v-list-item>
             </v-card>
@@ -331,21 +356,30 @@ import {
     GeoFirestore
 } from 'geofirestore'
 import FireUi from '~/components/FireUi.vue'
+import Permission from '~/components/Permission.vue'
 export default {
     components: {
         FireUi,
-        Loading
+        Loading,
+        Permission
     },
     layout: 'area',
     data() {
         return {
+            userProfile: {},
             isLoading: false,
             moneytooltip: false,
             ridertooltip: false,
+            promoCode: '',
             delivery_date: {
                 delivery_time: [],
                 label: 'Today',
                 day_name: ''
+            },
+            promoCodeStatus: {
+                accepted: null,
+                status: '',
+                value: 0,
             },
             isValid: false,
             dates: [],
@@ -458,6 +492,7 @@ export default {
                     id: this.user.id,
                     name: this.user.displayName
                 }
+                this.$bind('userProfile', this.$fireStoreObj().collection('users').doc(this.user.id))
                 this.authDiag = false
             }
         },
@@ -500,20 +535,96 @@ export default {
         }
         const google = GoogleMapsApiLoader(GMapSettings)
         this.$GMaps.google = google
-        this.$getLocation({
-            enableHighAccuracy: true,
-            timeout: 10000
-        }).then((coordinates) => {
-            this.$store.commit('map/setLocation', {
-                lat: coordinates.lat,
-                lng: coordinates.lng
+        if (("Notification" in window) && Notification.permission === "granted") {
+            this.$getLocation({
+                enableHighAccuracy: true,
+                timeout: 10000
+            }).then((coordinates) => {
+                this.$store.commit('map/setLocation', {
+                    lat: coordinates.lat,
+                    lng: coordinates.lng
+                })
+            }, (error) => {
+                this.isLoading = false
+                console.log(error)
             })
-        }, (error) => {
+        }
+        else {
             this.isLoading = false
-            console.log(error)
-        })
+        }
     },
     methods: {
+        findVoucher() {
+            this.promoCode = this.promoCode.toUpperCase().replace(/ /g, '')
+            this.$fireStoreObj().collection('voucher_codes').where('promoCode', '==', this.promoCode).get().then((snap) => {
+                if (snap.empty) {
+                    delete this.checkoutPayload.amount.deduction
+                    this.promoCodeStatus = {
+                        accepted: false,
+                        status: 'Promo Code is invalid',
+                        value: 0
+                    }
+                }
+                else {
+                    snap.docs.forEach(codes => {
+                        if (codes.data().merchantCode && (codes.data().stores).indexOf(this.merchant.id) > -1) {
+                            if (this.checkoutPayload.amount.order_value >= codes.data().MOV) {
+                                this.checkoutPayload.amount.deduction = {
+                                    type: 'Promo Code',
+                                    charged_to: 'merchant',
+                                    value: codes.data().type == 'Percent' ? codes.data().value + '%' : 'Less P ' + codes.data().value,
+                                    code: codes.data().promoCode,
+                                    computed: codes.data().type == 'Percent' ? (this.checkoutPayload.amount.order_value * (codes.data().value / 100)) : (codes.data().value)
+                                }
+                                this.promoCodeStatus = {
+                                    accepted: true,
+                                    status: this.checkoutPayload.amount.deduction,
+                                    value: codes.data().type == 'Percent' ? (this.checkoutPayload.amount.order_value * (codes.data().value / 100)) : (codes.data().value)
+                                }
+                            } else {
+                                this.promoCodeStatus = {
+                                    accepted: false,
+                                    status: 'Below Minimum Order Value. Order atleast P' + codes.data().MOV,
+                                    value: 0
+                                }
+                            }
+                        } else if (codes.data().platformCode) {
+                            if (this.checkoutPayload.amount.order_value >= codes.data().MOV) {
+                                this.checkoutPayload.amount.deduction = {
+                                    type: 'Promo Code',
+                                    charged_to: 'platform',
+                                    value: codes.data().type == 'Percent' ? codes.data().value + '%' : 'Less P ' + codes.data().value,
+                                    code: codes.data().promoCode,
+                                    computed: codes.data().type == 'Percent' ? (this.checkoutPayload.amount.order_value * (codes.data().value / 100)) : (codes.data().value)
+                                }
+                                this.promoCodeStatus = {
+                                    accepted: true,
+                                    status: this.checkoutPayload.amount.deduction,
+                                    value: codes.data().type == 'Percent' ? (this.checkoutPayload.amount.order_value * (codes.data().value / 100)) : (codes.data().value)
+                                }
+                            } else {
+                                this.promoCodeStatus = {
+                                    accepted: false,
+                                    status: 'Below Minimum Order Value. Order atleast P' + codes.data().MOV,
+                                    value: 0
+                                }
+                            }
+                        }
+                        else {
+                            this.promoCodeStatus = {
+                                accepted: false,
+                                status: 'Promo Code is invalid',
+                                value: 0,
+                            }
+                        }
+                    })
+                }
+            })
+        },
+        initCheckout() {
+            if (!this.isAuth) this.authDiag = true
+            else this.mapSheet = true
+        },
         attemptLogin() {
             if (!this.isAuth) {
                 this.authDiag = true
@@ -521,11 +632,10 @@ export default {
         },
         confirmOrder() {
             this.isValid = true
-            console.log(this.isAuth)
             if (!this.isAuth) this.shaker('needAuth')
             if (this.checkoutPayload.delivery.to.address === '' || this.checkoutPayload.delivery.to.unit === '') this.shaker('needAddr')
             if (this.checkoutPayload.delivery.date === '' || this.checkoutPayload.delivery.time === '') this.shaker('needDeli')
-            if (this.checkoutPayload.amount.money < this.grandtotal) this.shaker('needMoney')
+            if (this.checkoutPayload.amount.money < this.grandtotal - this.promoCodeStatus.value) this.shaker('needMoney')
             if (this.isValid) {
                 this.isLoading = true
                 const firestore = this.$fireStoreObj()
@@ -684,12 +794,10 @@ export default {
                 ds = Math.floor(ds) + 1
                 const distance_actual = parseFloat(d.rows[0].elements[0].distance.value / 1000).toFixed(2)
                 let rider_df = 0
-                if(distance_actual<=md)
-                    rider_df = fixed_rider_fee
-                else
-                    rider_df = fixed_rider_fee + ((distance_actual-md) * rider)
-                 rider_df = Math.floor(rider_df)
-                let  platform_df = Math.floor(df - rider_df)
+                if (distance_actual <= md) rider_df = fixed_rider_fee
+                else rider_df = fixed_rider_fee + ((distance_actual - md) * rider)
+                rider_df = Math.floor(rider_df)
+                let platform_df = Math.floor(df - rider_df)
                 let sc = Math.floor(parseFloat(
                     (this.merchant.rates.sc * this.grandtotal) / 100).toFixed(2))
                 if (sc < scv) sc = scv
@@ -842,7 +950,7 @@ export default {
             return total
         }
     }
-}
+};
 </script>
 <style scoped>
   .shake {

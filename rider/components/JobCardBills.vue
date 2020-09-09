@@ -347,10 +347,11 @@ Thank you'`
             })
         },
         updateBalance() {
-            const firestore = this.$fireStoreObj()
-            firestore.collection('riders').doc(this.$store.getters['auth/getUser'].id).update({
-                'd.balance': this.$fireStoreObj.FieldValue.increment(this.balance * -1)
-            }).then(() => {})
+             this.$fireStoreObj().collection('riders').doc(this.$store.getters['auth/getUser'].id).collection('balances').add({
+                desc:'Hold-Balance: Commission Fee',
+                amount: this.balance * -1,
+                timestamp: new Date().getTime()
+              })
         },
         openMap(location) {
             const coord = this.$store.getters['rider/getLocation']

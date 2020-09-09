@@ -64,6 +64,7 @@
                                     </v-list-item>
                                 </v-list>
                             </v-flex>
+                            <v-btn block tile color="red" @click.stop="$fireAuth.signOut()">Logout</v-btn>
                         </v-layout>
                     </v-content>
                 </v-container>

@@ -50,13 +50,19 @@
                     <v-content v-if="isHide">
                         <v-layout wrap justify-center align-center text-left>
                             <v-flex xs12 md4 sm4 lg3 class="text-center">
-                                <v-icon class="mb-2" color="error" size="200"> mdi-map-marker </v-icon>
-                                <blockquote class="blockquote mb-5">
-                                    <span style="font-size:50px;">&#128546;</span>
-                                    <h4>No Biller in Your Location</h4> </blockquote>
-                                <footer>
-                                    <v-btn outlined text block color="red" @click.stop="coordiag = true"> Select Location </v-btn>
-                                </footer>
+                               
+                               <div class="mapcontainer">
+                                    <GMap id="gmap" ref="gMap" :center="mylocation" :options="{
+                fullscreenControl: false,
+                streetViewControl: false,
+                mapTypeControl: true,
+                zoomControl: true,
+                gestureHandling: 'greedy'
+              }" :zoom="15" @center_changed="centerChange">
+                                        <GMapMarker ref="gmapmarker" :position="mylocation" :options="{ icon: selectedmarker }" /> </GMap>
+                                </div>
+                                <v-btn color="blue darken-1" text class="white--text mt-5" block outlined @click="updateMapLocation"> Find Biller </v-btn>
+
                             </v-flex>
                         </v-layout>
                     </v-content>
@@ -77,27 +83,7 @@
                 </v-container>
             </v-sheet>
         </v-card>
-        <v-bottom-sheet v-model="coordiag" persistent max-width="400px">
-            <v-card>
-                <v-card-title primary-title> Confirmed Location </v-card-title>
-                <v-card-text>
-                    <div class="mapcontainer">
-                        <GMap id="gmap" ref="gMap" :center="mylocation" :options="{
-                fullscreenControl: false,
-                streetViewControl: false,
-                mapTypeControl: true,
-                zoomControl: true,
-                gestureHandling: 'greedy'
-              }" :zoom="15" @center_changed="centerChange">
-                            <GMapMarker ref="gmapmarker" :position="mylocation" :options="{ icon: selectedmarker }" /> </GMap>
-                    </div>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn color="blue darken-1" text class="white--text" block outlined @click="updateMapLocation"> Find Biller </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-bottom-sheet>
+       
     </v-layout>
 </template>
 <script>
@@ -228,14 +214,3 @@ export default {
     }
 };
 </script>
-<style scoped>
-    .cardhyt {
-    height: 90vh;
-  }
-  
-  .GMap,
-  .GMap__Wrapper {
-      height: calc(90vh - 100px);
-      margin-top: 10px;
-    }
-</style>

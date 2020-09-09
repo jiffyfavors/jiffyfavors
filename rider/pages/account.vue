@@ -7,7 +7,8 @@
                     <v-layout>
                         <v-flex class="text-center">
                             <v-icon class="mb-5" color="blue" size="200">mdi-account-circle</v-icon>
-                            <blockquote class="blockquote"> &#8220;<strong>Please Login to view your account.</strong>&#8221;
+                            <blockquote class="blockquote"> &#8220;
+                                <strong>Please Login to view your account.</strong>&#8221;
                                 <footer>
                                     <v-btn tile outlined v-if="user===null" color="blue" @click="loginSheet = true"> Login </v-btn>
                                 </footer>
@@ -31,8 +32,6 @@
                                 </v-btn>
                             </v-list-item-action>
                         </v-list-item>
-                    </v-list>
-                    <v-list dense>
                         <v-list-item id="contact">
                             <v-list-item-avatar>
                                 <v-icon color="red"> mdi-phone </v-icon>
@@ -47,9 +46,61 @@
                                 </v-btn>
                             </v-list-item-action>
                         </v-list-item>
+                        <v-list-item id="contact">
+                            <v-list-item-avatar>
+                                <v-icon color="red"> mdi-motorbike </v-icon>
+                            </v-list-item-avatar>
+                            <v-list-item-content>
+                                <v-list-item-title>0 Vehicle Registered</v-list-item-title>
+                                <v-list-item-subtitle>Vehicle</v-list-item-subtitle>
+                            </v-list-item-content>
+                            <v-list-item-action>
+                                <v-btn icon @click.stop="">
+                                    <v-icon color="blue"> mdi-plus </v-icon>
+                                </v-btn>
+                            </v-list-item-action>
+                        </v-list-item>
                     </v-list>
                 </v-card-text>
-              
+            </v-card>
+            <v-card class="ma-2">
+                <v-card-title primary-title>Please comply the following</v-card-title>
+                <v-card-text>
+                    <v-list dense>
+                        <v-list-item>
+                            <v-list-item-icon>
+                                <v-icon color="red">mdi-close</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                <v-list-item-title>Driver's License</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                        <v-list-item>
+                            <v-list-item-icon>
+                                <v-icon color="red">mdi-close</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                <v-list-item-title>NBI Clearance</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                        <v-list-item>
+                            <v-list-item-icon>
+                                <v-icon color="red">mdi-close</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                <v-list-item-title>Tax Identification Number(TIN)</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                           <v-list-item>
+                            <v-list-item-icon>
+                                <v-icon color="red">mdi-close</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-content>
+                                <v-list-item-title>Atleast 1 Approved Vehicle</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </v-list>
+                </v-card-text>
             </v-card>
         </v-flex>
         <v-bottom-sheet v-model="loginSheet">
@@ -182,7 +233,6 @@ export default {
             this.fullname = this.user.displayName
             this.number = this.user.phoneNumber
         }
-        
     }
 };
 </script>

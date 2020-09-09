@@ -29,9 +29,9 @@
                 </v-list>
             </v-menu>
         </v-app-bar>
-        <v-sheet id="scrolling-techniques-3" class="overflow-y-auto" max-height="100vh">
-            <v-container v-if="aptconfimed" fluid>
-                <v-content>
+        <v-sheet id="scrolling-techniques-3" class="overflow-y-auto" max-height="85vh">
+            <v-content>
+                <v-container v-if="aptconfimed" fluid>
                     <v-layout wrap justify-center align-center text-left>
                         <v-flex xs12 md4 sm4 lg3 class="text-center">
                             <v-icon class="mb-2" color="success" size="200"> mdi-checkbox-marked-circle </v-icon>
@@ -43,50 +43,49 @@
                             </footer>
                         </v-flex>
                     </v-layout>
-                </v-content>
-            </v-container>
-            <v-container v-if="!aptconfimed" fluid>
-                <v-content>
-                    <h3>Shop at {{business.business_name}} <small>{{business.branch}}</small> with Jiffy Rider Shopper.</h3>
-                    <v-row justify="center">
-                        <v-expansion-panels v-model="faq" inset>
-                            <v-expansion-panel value="0">
-                                <v-expansion-panel-header>How it works?</v-expansion-panel-header>
-                                <v-expansion-panel-content>
-                                    <p>Shop at {{business.business_name}} bill without leaving the comfort of your home or office. Let our
-                                        <strong>Jiffy Rider Shopper</strong> handle the buying for you.
-                                        <strong>No more waiting in line.</strong>
-                                        <strong>You can see the prices in realtime while your rider shop for you.</strong>
-                                    </p>
-                                </v-expansion-panel-content>
-                            </v-expansion-panel>
-                            <v-expansion-panel>
-                                <v-expansion-panel-header>Shopping Procedure</v-expansion-panel-header>
-                                <v-expansion-panel-content>
-                                    <ol>
-                                        <li value="1">Create a List of Items you want to buy at {{business.business_name}} using the create list below.</li>
-                                        <li>Submit your list and wait for the rider to accept the job.</li>
-                                        <li>Your rider will proceed to
-                                            <strong>{{business.business_name}}</strong> to buy item on the list.</li>
-                                        <li>You will see the price real time as your rider shop for you.</li>
-                                        <li>You can add or remove item from the list as long as the rider not yet paid the item.</li>
-                                        <li>The rider will proceed with the payment and head your delivery location.</li>
-                                        <li>Pay your rider with the total item on the list plus the computed service and delivery fee.</li>
-                                    </ol>
-                                </v-expansion-panel-content>
-                            </v-expansion-panel>
-                            <v-expansion-panel>
-                                <v-expansion-panel-header>Service Fee</v-expansion-panel-header>
-                                <v-expansion-panel-content>
-                                    <p>The cost of service is
-                                        <strong>{{business.rates.sc}} %</strong> plus
-                                        <strong>per km rate</strong> for travelled distance from {{business.business_name}}-{{business.branch}} to your delivery location. </p>
-                                </v-expansion-panel-content>
-                            </v-expansion-panel>
-                        </v-expansion-panels>
-                    </v-row>
-                </v-content>
-            </v-container>
+                </v-container>
+                    <v-container v-if="!aptconfimed" fluid>
+                        <h3>Shop at {{business.business_name}} <small>{{business.branch}}</small> with Jiffy Rider Shopper.</h3>
+                        <v-row justify="center">
+                            <v-expansion-panels v-model="faq" inset>
+                                <v-expansion-panel value="0">
+                                    <v-expansion-panel-header>How it works?</v-expansion-panel-header>
+                                    <v-expansion-panel-content>
+                                        <p>Shop at {{business.business_name}} bill without leaving the comfort of your home or office. Let our
+                                            <strong>Jiffy Rider Shopper</strong> handle the buying for you.
+                                            <strong>No more waiting in line.</strong>
+                                            <strong>You can see the prices in realtime while your rider shop for you.</strong>
+                                        </p>
+                                    </v-expansion-panel-content>
+                                </v-expansion-panel>
+                                <v-expansion-panel>
+                                    <v-expansion-panel-header>Shopping Procedure</v-expansion-panel-header>
+                                    <v-expansion-panel-content>
+                                        <ol>
+                                            <li value="1">Create a List of Items you want to buy at {{business.business_name}} using the create list below.</li>
+                                            <li>Submit your list and wait for the rider to accept the job.</li>
+                                            <li>Your rider will proceed to
+                                                <strong>{{business.business_name}}</strong> to buy item on the list.</li>
+                                            <li>You will see the price real time as your rider shop for you.</li>
+                                            <li>You can add or remove item from the list as long as the rider not yet paid the item.</li>
+                                            <li>The rider will proceed with the payment and head your delivery location.</li>
+                                            <li>Pay your rider with the total item on the list plus the computed service and delivery fee.</li>
+                                        </ol>
+                                    </v-expansion-panel-content>
+                                </v-expansion-panel>
+                                <v-expansion-panel>
+                                    <v-expansion-panel-header>Service Fee</v-expansion-panel-header>
+                                    <v-expansion-panel-content>
+                                        <p>The cost of service is
+                                            <strong>{{business.rates.sc}} %</strong> plus
+                                            <strong>per km rate</strong> for travelled distance from {{business.business_name}}-{{business.branch}} to your delivery location. </p>
+                                    </v-expansion-panel-content>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
+                        </v-row>
+                         </v-container>
+            </v-content>
+           
         </v-sheet>
         <v-bottom-sheet :persistent="calculated" v-model="bsAppointment">
             <v-card v-if="!calculated">
@@ -451,7 +450,7 @@ export default {
         },
     },
     mounted() {
-         this.$fireAnalytics.logEvent('page_view')
+        this.$fireAnalytics.logEvent('page_view')
         const GMapSettings = {
             apiKey: this.$GMaps.apiKey,
             language: this.language
@@ -671,7 +670,6 @@ export default {
         addItem() {
             if (this.mode === 'add') {
                 this.$store.commit('cart/addList', this.shopitem)
-                
             } else {
                 this.$store.commit('cart/updateItemList', {
                     data: this.shopitem,
@@ -679,17 +677,16 @@ export default {
                 })
             }
             this.shopitem = {
-                    desc: '',
-                    qty: 1,
-                    price: 0,
-                    measure: 1,
-                    unit: 'pc',
-                    status: 'unpaid'
-                }
+                desc: '',
+                qty: 1,
+                price: 0,
+                measure: 1,
+                unit: 'pc',
+                status: 'unpaid'
+            }
             this.editIndex = -1
             this.mode = 'add'
             this.addNewItem = false
-           
         },
         generateBookingId() {
             const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'

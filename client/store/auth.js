@@ -19,7 +19,7 @@ export const getters = {
     }
   },
   getDrawer(state){
-    console.log('Getting drawer', state.drawer)
+   
     return state.drawer
   },
   getFCMToken(state) {
@@ -59,6 +59,9 @@ export const mutations = {
   },
   fcmTokenSetter(state, data) {
     state.authUser.fcmToken = data
+  },
+  updateUserDisplayName(state, data){
+    state.authUser.displayName = data
   },
   setLastUpdate: (state, data) => {
     state.lastUpdate = data
@@ -122,6 +125,8 @@ export const actions = {
     )
   }),
   onAuthStateChanged({ commit }, { authUser }) {
+    console.log('auth changed')
+    console.log(authUser)
     if (!authUser) {
       commit('RESET_STORE')
       return

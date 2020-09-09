@@ -6,10 +6,12 @@
         }" min-height="200" transition="fade-transition">
 
      
-            <v-card width="100%" :to="url">
+            <v-card width="100%" :to="url" :disabled="data.draft">
                 <v-img :src="data.backdrop" height="200px" min-width="100%" width="100%">
                     <span v-if="data.rates.cr>0" class="bestseller">Recommended</span>
+                        <span class="transtype" v-if="data.draft">Not Accepting Order</span>
                 </v-img>
+
                 <v-card-actions>
                     <v-list-item dense>
                         <v-list-item-avatar color="grey darken-3">

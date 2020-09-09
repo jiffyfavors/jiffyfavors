@@ -1,10 +1,10 @@
 <template>
     <v-layout>
-           <nav-drawer v-model="drawer" ></nav-drawer>
+        <nav-drawer v-model="drawer"></nav-drawer>
         <loading :active.sync="isLoading" loader="bars" :is-full-page="true" color="blue" />
         <v-card flat width="100%" class="cardhyt mb-10">
             <v-app-bar color="rgba(100,115,201)" app dark flat>
-                    <v-app-bar-nav-icon  v-if="!isSearch" @click.stop="drawer=!drawer"></v-app-bar-nav-icon>
+                <v-app-bar-nav-icon v-if="!isSearch" @click.stop="drawer=!drawer"></v-app-bar-nav-icon>
                 <v-avatar v-if="!isSearch" class="mr-2" rounded size="35">
                     <v-img src="/icon.png" /> </v-avatar>
                 <v-toolbar-title v-if="!isSearch"> Jiffy Favors </v-toolbar-title>
@@ -50,13 +50,17 @@
                     <v-content v-if="isHide">
                         <v-layout wrap justify-center align-center text-left>
                             <v-flex xs12 md4 sm4 lg3 class="text-center">
-                                <v-icon class="mb-2" color="error" size="200"> mdi-map-marker </v-icon>
-                                <blockquote class="blockquote mb-5">
-                                    <span style="font-size:50px;">&#128546;</span>
-                                    <h4>No Shop/Store in Your Location</h4> </blockquote>
-                                <footer>
-                                    <v-btn outlined text block color="red" @click.stop="coordiag = true"> Select Location </v-btn>
-                                </footer>
+                                <div class="mapcontainer">
+                                    <GMap id="gmap" ref="gMap" :center="mylocation" :options="{
+                fullscreenControl: false,
+                streetViewControl: false,
+                mapTypeControl: true,
+                zoomControl: true,
+                gestureHandling: 'greedy'
+              }" :zoom="15" @center_changed="centerChange">
+                                        <GMapMarker ref="gmapmarker" :position="mylocation" :options="{ icon: selectedmarker }" /> </GMap>
+                                </div>
+                                <v-btn color="blue darken-1" text class="white--text mt-5" block outlined @click="updateMapLocation"> Find Store </v-btn>
                             </v-flex>
                         </v-layout>
                     </v-content>
@@ -77,27 +81,6 @@
                 </v-container>
             </v-sheet>
         </v-card>
-        <v-bottom-sheet v-model="coordiag" persistent max-width="400px">
-            <v-card>
-                <v-card-title primary-title> Confirmed Location </v-card-title>
-                <v-card-text>
-                    <div class="mapcontainer">
-                        <GMap id="gmap" ref="gMap" :center="mylocation" :options="{
-                fullscreenControl: false,
-                streetViewControl: false,
-                mapTypeControl: true,
-                zoomControl: true,
-                gestureHandling: 'greedy'
-              }" :zoom="15" @center_changed="centerChange">
-                            <GMapMarker ref="gmapmarker" :position="mylocation" :options="{ icon: selectedmarker }" /> </GMap>
-                    </div>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn color="blue darken-1" text class="white--text" block outlined @click="updateMapLocation"> Find Shop </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-bottom-sheet>
     </v-layout>
 </template>
 <script>
@@ -114,7 +97,7 @@ export default {
         return {
             selectedmarker: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAHUSURBVHgB5VU7SwNBEJ7LmZBgMC+UdKKx0MZCG2srwcbCB2glpFDQ3to/IegvSAIWPrBJIySlipUKKqYLaHJ3iWIelzu/DTk8j71H7MQPltmZnflmZ3b3juivQ3BzCIfDI4FAYBvTRV3XR7tBglCCOIP9oFwuv/46QSwWWwfZIaaDNi7vGOlqtZqhfhPE4/EViAy5V6ljE8uVSuXYc4JkMjncarUeMR0ib5Db7fZEvV6vWBd8PG+Q73LIFYyj3lAsa1G/37/D4+JWgPbcQkybd9jpdGYVRXlmSiQSSYmieMWmhgMuwI0kSTPkpQJgzKJnDfJuKYryBJH7sVNBSPGI7BKoFl3n+GguMY4JHiz6GtoybiisRczmEtPFAM+Ifl6i5DmTKYqeX+Nssj19lUz9N2J4XNxDTiQSkwi4oz6ADU3hLdxb7dwW9RyL5B0FHrltAgZUsEce4eRrmwB3ugCRJ3fk4VvsOwEDHtcWxKeDy4emaWmHdRKdFpvNphQKhdhFmOet42D3sftTJw7X/wHgw/U8h1ywkJ/gYJeI/wi/g8kdmqqqG5Alk62Er+emG7nXBFSr1aroNSNknwOVzZnNS6xIHtFoNF6CweAbpheyLOfo3+ALfrSuzJ1F8EsAAAAASUVORK5CYII=',
             coordiag: false,
-            drawer:false,
+            drawer: false,
             isLoading: true,
             isHide: false,
             isSearch: false,
@@ -132,7 +115,7 @@ export default {
         }
     },
     computed: {
-         cartSize() {
+        cartSize() {
             return this.$store.getters['cart/getCartItemCount']
         },
         resto() {
@@ -161,7 +144,7 @@ export default {
         }
     },
     mounted() {
-       this.$getLocation({
+        this.$getLocation({
             enableHighAccuracy: true,
             timeout: 10000
         }).then(

@@ -37,6 +37,7 @@
     "vue-browser-geolocation": "^1.8.0",
     "vue-loading-overlay": "^3.3.2",
     "vue-toast-notification": "^0.4.1",
+    "vue2-dropzone": "^3.6.0",
     "vuefire": "^2.2.2",
     "vuex-persistedstate": "^3.0.1",
     "vuexfire": "^3.2.2"

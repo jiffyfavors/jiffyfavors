@@ -1,39 +1,39 @@
 <template>
+    <v-layout>
     <client-only>
-        <v-bottom-sheet v-model="isShow">
-            <v-card class="mx-auto" max-width="500" v-if="isShow">
-                <v-card-title>Request Permission</v-card-title>
-                <v-list shaped>
-                    <v-list-item-group v-if="isNotifShow">
-                        <v-list-item dense active-class="deep-purple--text text--accent-4" @click.stop="notification = !notification">
-                            <template v-slot:default="{ active, toggle }">
-                                <v-list-item-action>
-                                    <v-checkbox :input-value="active" :true-value="true" :false-value="false" color="deep-purple accent-4" @click="toggle"></v-checkbox>
-                                </v-list-item-action>
-                                <v-list-item-content>
-                                    <v-list-item-title>Allow Notification</v-list-item-title>
-                                    <v-list-item-subtitle>Receivelatest promos of your favorite merchant.</v-list-item-subtitle>
-                                </v-list-item-content>
-                            </template>
-                        </v-list-item>
-                    </v-list-item-group>
-                    <v-list-item-group v-if="isLocShow">
-                        <v-list-item dense active-class="deep-purple--text text--accent-4" @click.stop="locations=!locations">
-                            <template v-slot:default="{ active, toggle }">
-                                <v-list-item-action>
-                                    <v-checkbox :input-value="active" :true-value="true" :false-value="false" color="deep-purple accent-4" @click="toggle"></v-checkbox>
-                                </v-list-item-action>
-                                <v-list-item-content>
-                                    <v-list-item-title>Allow Location</v-list-item-title>
-                                    <v-list-item-subtitle>To show you nearby merchants, billers and stores.</v-list-item-subtitle>
-                                </v-list-item-content>
-                            </template>
-                        </v-list-item>
-                    </v-list-item-group>
-                </v-list>
-            </v-card>
-        </v-bottom-sheet>
+        <v-card class="mx-auto" max-width="500" v-if="isShow">
+            <v-card-title>Request Permission</v-card-title>
+            <v-list shaped>
+                <v-list-item-group v-if="isNotifShow">
+                    <v-list-item dense active-class="deep-purple--text text--accent-4" @click.stop="notification = !notification">
+                        <template v-slot:default="{ active, toggle }">
+                            <v-list-item-action>
+                                <v-checkbox :input-value="active" :true-value="true" :false-value="false" color="deep-purple accent-4" @click="toggle"></v-checkbox>
+                            </v-list-item-action>
+                            <v-list-item-content>
+                                <v-list-item-title>Allow Notification</v-list-item-title>
+                                <v-list-item-subtitle>Receive latest promos of your favorite merchant.</v-list-item-subtitle>
+                            </v-list-item-content>
+                        </template>
+                    </v-list-item>
+                </v-list-item-group>
+                <v-list-item-group v-if="isLocShow">
+                    <v-list-item dense active-class="deep-purple--text text--accent-4" @click.stop="locations=!locations">
+                        <template v-slot:default="{ active, toggle }">
+                            <v-list-item-action>
+                                <v-checkbox :input-value="active" :true-value="true" :false-value="false" color="deep-purple accent-4" @click="toggle"></v-checkbox>
+                            </v-list-item-action>
+                            <v-list-item-content>
+                                <v-list-item-title>Allow Location</v-list-item-title>
+                                <v-list-item-subtitle>To show you nearby merchants, billers and stores.</v-list-item-subtitle>
+                            </v-list-item-content>
+                        </template>
+                    </v-list-item>
+                </v-list-item-group>
+            </v-list>
+        </v-card>
     </client-only>
+</v-layout>
 </template>
 <script>
 import {
@@ -56,9 +56,6 @@ export default {
                     return new Date().getTime() - 119000
                 }
             },
-            isShow() {
-                return this.isLocShow || this.isNotifShow
-            },
             fcmToken() {
                 return this.$store.getters['auth/getFCMToken']
             },
@@ -67,6 +64,9 @@ export default {
             },
             user() {
                 return this.$store.getters['auth/getUser']
+            },
+            isShow() {
+                return this.isLocShow || this.isNotifShow
             },
         },
         watch: {
@@ -83,24 +83,20 @@ export default {
         },
         mounted() {
             this.checkNotification()
-            navigator.permissions.query({
-                name: 'geolocation'
-            }).then((result) => {
-                if (result.state === 'granted') {
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(() => {
                     this.isLocShow = false
                     let now = new Date().getTime()
                     if (now - this.lastUpdate > 60 * 1000 * 30) {
                         this.getLocation()
-                        if (Notification.permission === "granted") {
-                            this.getToken('Line 93')
-                        }
                     }
-                } else if (result.state !== 'denied') {
-                    this.isLocShow = true
-                } else {
+                }, () => {
                     this.isLocShow = false
-                }
-            })
+                });
+            }
+            else {
+                this.isLocShow = false
+            }
         },
         methods: {
             getLocation() {
@@ -125,32 +121,7 @@ export default {
                             lat: coord.latitude,
                             lng: coord.longitude
                         }).then(() => {
-                            let path = this.user ? 'registered' : 'unregistered'
-                            if (Notification.permission === "granted" && this.fcmToken)
-                            {
-                                const firestore = this.$fireStoreObj()
-                                let area_name = this.df.name.replace(/ /g, '_').toLowerCase()
-                                const area = new GeoCollectionReference(firestore.collection('areas').doc(this.df.id).collection('tokens'))
-                                if (this.user) {
-                                    area.doc('registered').update({
-                                        tokens: this.$fireStoreObj.FieldValue.arrayUnion(this.fcmToken)
-                                    })
-                                    area.doc('unregistered').update({
-                                        tokens: this.$fireStoreObj.FieldValue.arrayRemove(this.fcmToken)
-                                    })
-                                    this.topicSubscription([this.fcmToken], ['registered', 'registered' + '_' + area_name, 'registered' + '_' + this.df.country.code], 'subscribeToTopic')
-                                    this.topicSubscription([this.fcmToken], ['unregistered', 'unregistered' + '_' + area_name, 'unregistered' + '_' + this.df.country.code], 'unsubscribeFromTopic')
-                                } else {
-                                    area.doc('registered').update({
-                                        tokens: this.$fireStoreObj.FieldValue.arrayRemove(this.fcmToken)
-                                    })
-                                    area.doc('unregistered').update({
-                                        tokens: this.$fireStoreObj.FieldValue.arrayUnion(this.fcmToken)
-                                    })
-                                    this.topicSubscription([this.fcmToken], ['registered', 'registered' + '_' + area_name, 'registered' + '_' + this.df.country.code], 'unsubscribeFromTopic')
-                                    this.topicSubscription([this.fcmToken], ['unregistered', 'unregistered' + '_' + area_name, 'unregistered' + '_' + this.df.country.code], 'subscribeToTopic')
-                                }
-                            }
+                            this.updateFCMToken()
                         })
                     }
                     this.isLocShow = false
@@ -164,6 +135,39 @@ export default {
                     this.isLocShow = true
                 } else {
                     this.isLocShow = false
+                }
+            },
+            updateFCMToken() {
+                if (("Notification" in window)) {
+                    if (Notification.permission === "granted" && this.fcmToken)
+                    {
+                        let path = this.user ? 'registered' : 'unregistered'
+                        const firestore = this.$fireStoreObj()
+                        let area_name = this.df.name.replace(/ /g, '_').toLowerCase()
+                        const area = new GeoCollectionReference(firestore.collection('areas').doc(this.df.id).collection('tokens'))
+                        if (this.user) {
+                            area.doc('registered').update({
+                                tokens: this.$fireStoreObj.FieldValue.arrayUnion(this.fcmToken)
+                            })
+                            area.doc('unregistered').update({
+                                tokens: this.$fireStoreObj.FieldValue.arrayRemove(this.fcmToken)
+                            })
+                            this.topicSubscription([this.fcmToken], ['registered', 'registered' + '_' + area_name, 'registered' + '_' + this.df.country.code], 'subscribeToTopic')
+                            this.topicSubscription([this.fcmToken], ['unregistered', 'unregistered' + '_' + area_name, 'unregistered' + '_' + this.df.country.code], 'unsubscribeFromTopic')
+                        } else {
+                            area.doc('registered').update({
+                                tokens: this.$fireStoreObj.FieldValue.arrayRemove(this.fcmToken)
+                            })
+                            area.doc('unregistered').update({
+                                tokens: this.$fireStoreObj.FieldValue.arrayUnion(this.fcmToken)
+                            })
+                            this.topicSubscription([this.fcmToken], ['registered', 'registered' + '_' + area_name, 'registered' + '_' + this.df.country.code], 'unsubscribeFromTopic')
+                            this.topicSubscription([this.fcmToken], ['unregistered', 'unregistered' + '_' + area_name, 'unregistered' + '_' + this.df.country.code], 'subscribeToTopic')
+                        }
+                    }
+                } else {
+                    this.$store.commit('auth/setFCMToken', 'Not Supported')
+                    this.isNotifShow = false
                 }
             },
             checkNotification() {
@@ -188,6 +192,7 @@ export default {
                         this.isNotifShow = false
                     }
                 } else {
+                    this.$store.commit('auth/setFCMToken', 'Not Supported')
                     this.isNotifShow = false
                 }
             },
@@ -206,25 +211,29 @@ export default {
                 }
             },
             async getToken(line) {
-                console.log('Token Called', line)
-                let permission = await Notification.requestPermission()
-                if (permission === "granted") {
-                    this.isNotifShow = false
-                    let currentToken
-                    try {
-                        currentToken = await this.$fireMess.getToken()
-                    } catch (e) {
-                        console.log('An error occurred while retrieving token. ', e)
-                    }
-                    if (currentToken && !this.fcmToken) {
-                        this.$store.commit('auth/setFCMToken', currentToken)
-                    }
-                    if (currentToken && this.fcmToken && currentToken !== this.fcmToken) {
-                        this.$store.commit('auth/setFCMToken', currentToken)
+                if (("Notification" in window)) {
+                    let permission = await Notification.requestPermission()
+                    if (permission === "granted") {
+                        this.isNotifShow = false
+                        let currentToken
+                        try {
+                            currentToken = await this.$fireMess.getToken()
+                        } catch (e) {
+                            console.log('An error occurred while retrieving token. ', e)
+                        }
+                        if (currentToken) {
+                            this.$store.commit('auth/setFCMToken', currentToken)
+                        }
+                        if (currentToken && this.fcmToken && currentToken !== this.fcmToken) {
+                            this.$store.commit('auth/setFCMToken', currentToken)
+                        } else {
+                            console.info('No Instance ID token available. Request permission to generate one.')
+                        }
                     } else {
-                        console.info('No Instance ID token available. Request permission to generate one.')
+                        this.isNotifShow = false
                     }
                 } else {
+                    this.$store.commit('auth/setFCMToken', 'Not Supported')
                     this.isNotifShow = false
                 }
             },

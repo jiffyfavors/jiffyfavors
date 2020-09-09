@@ -29,9 +29,9 @@
                 </v-list>
             </v-menu>
         </v-app-bar>
-        <v-sheet id="scrolling-techniques-3" class="overflow-y-auto" max-height="100vh">
-            <v-container v-if="aptconfimed" fluid>
-                <v-content>
+        <v-sheet id="scrolling-techniques-3" class="overflow-y-auto" max-height="85vh">
+            <v-content>
+                <v-container v-if="aptconfimed" fluid>
                     <v-layout wrap justify-center align-center text-left>
                         <v-flex xs12 md4 sm4 lg3 class="text-center">
                             <v-icon class="mb-2" color="success" size="200"> mdi-checkbox-marked-circle </v-icon>
@@ -43,10 +43,8 @@
                             </footer>
                         </v-flex>
                     </v-layout>
-                </v-content>
-            </v-container>
-            <v-container v-if="!aptconfimed" fluid>
-                <v-content>
+                </v-container>
+                <v-container v-if="!aptconfimed" fluid>
                     <h3>Pay your {{business.business_name}} bills with Jiffy Favors</h3>
                     <v-row justify="center">
                         <v-expansion-panels v-model="faq" inset>
@@ -166,269 +164,270 @@
                             </v-card-text>
                         </v-card>
                     </v-row>
-                </v-content>
-            </v-container>
+                </v-container>
+            </v-content>
         </v-sheet>
-        <v-bottom-sheet v-model="mapSheet">
-            <v-card>
-                <v-card-title>Select Location</v-card-title>
-                <v-card-text>
-                    <v-radio-group v-if="currentMode!='pickup'" v-model="mode">
-                        <v-radio label="Same as Pickup Location" value="same"></v-radio>
-                        <v-radio label="Select Location" value="location"></v-radio>
-                    </v-radio-group>
-                    <div class="mapcontainer" v-if="mode==='location' || currentMode === 'pickup'">
-                        <GMap id="gmap" ref="gMap" :center="mylocation" :options="options" :zoom="15" @center_changed="centerChange">
-                            <GMapMarker ref="gmapmarker" :position="mylocation" :options="{ icon: selectedmarker }" /> </GMap>
-                    </div>
-                </v-card-text>
-                <v-card-actions>
-                    <v-btn outlined @click.stop="locationSetter()" text color="blue" block class="ma-1">Next</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-bottom-sheet>
-        <v-bottom-sheet v-model="bsAppointment">
-            <v-card>
-                <v-card-title>Request Appointment </v-card-title>
-                <v-card-text>
-                    <v-list nav outlined tile width="100%" dense>
-                        <v-list-item id="needAuth" dense>
-                            <v-list-item-icon>
-                                <v-icon color="red"> mdi-cellphone </v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content>
-                                <v-list-item-title> {{ contact.name }} {{ contact.number }} </v-list-item-title>
-                                <v-list-item-subtitle> Contact Information </v-list-item-subtitle>
-                            </v-list-item-content>
-                            <v-list-item-action @click.stop="attemptLogin()">
-                                <v-icon color="red"> mdi-chevron-right </v-icon>
-                            </v-list-item-action>
-                        </v-list-item>
-                        <v-list-item id="billdiv" dense>
-                            <v-list-item-icon>
-                                <v-icon color="blue"> mdi-account-cash </v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content>
-                                <v-list-item-title>{{bill_info.name}} {{bill_info.accountNo}}</v-list-item-title>
-                                <v-list-item-subtitle>Bill Information </v-list-item-subtitle>
-                            </v-list-item-content>
-                            <v-list-item-action>
-                                <v-icon @click.stop="billdiag = true" color="red"> mdi-chevron-right </v-icon>
-                            </v-list-item-action>
-                        </v-list-item>
-                        <v-list-item id="pickup" dense>
-                            <v-list-item-icon>
-                                <v-icon color="blue"> mdi-map-marker </v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content>
-                                <v-list-item-title>{{fees.pickup.address}}</v-list-item-title>
-                                <v-list-item-subtitle> Pickup Address </v-list-item-subtitle>
-                            </v-list-item-content>
-                            <v-list-item-action>
-                                <v-icon @click.stop="currentLocation = fees.pickup, addrText ='Pickup' , addressDiag = true" color="red"> mdi-chevron-right </v-icon>
-                            </v-list-item-action>
-                        </v-list-item>
-                        <v-list-item id="dropoff" dense>
-                            <v-list-item-icon>
-                                <v-icon color="blue"> mdi-map-marker </v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content>
-                                <v-list-item-title>{{fees.dropoff.address}}</v-list-item-title>
-                                <v-list-item-subtitle> Delivery Address </v-list-item-subtitle>
-                            </v-list-item-content>
-                            <v-list-item-action>
-                                <v-icon color="red" @click.stop="currentLocation = fees.dropoff , addrText='Delivery', addressDiag = true"> mdi-chevron-right </v-icon>
-                            </v-list-item-action>
-                        </v-list-item>
-                      
-                    </v-list>
-                    <v-simple-table dense>
-                        <template #default>
-                            <tbody>
-                                <tr>
-                                    <td>Service Fee</td>
-                                    <td>{{business.rates.sf|toPHP}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Pickup Fee ({{fees.pickup.distance}} km)</td>
-                                    <td>{{fees.pickup.fees.rider + fees.pickup.fees.platform|toPHP}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Delivery Fee ({{fees.dropoff.distance}} km)</td>
-                                    <td>{{fees.dropoff.fees.rider + fees.dropoff.fees.platform|toPHP}}</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <span class="red--text">
-                                            <strong>Total</strong>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span class="red--text">
-                                            <strong>{{fees.pickup.fees.rider + fees.pickup.fees.platform + business.rates.sf + fees.dropoff.fees.rider + fees.dropoff.fees.platform |toPHP}}</strong>
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </template>
-                    </v-simple-table>
-                </v-card-text>
-                <v-card-actions>
-                    <v-btn outlined text color="blue" @click.stop="preConfirmAppointment()" block class="ma-1">Confirm Appointment</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-bottom-sheet>
-        <v-bottom-sheet v-model="bsQoute">
-            <v-card v-if="!calculated">
-                <v-card-title>Request a Qoutation </v-card-title>
-                <v-card-text>
-                    <v-list nav outlined tile width="100%" dense>
-                          <v-list-item id="needDeli">
-                            <v-list-item-icon>
-                                <v-icon color="blue"> mdi-clock </v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content>
-                                <v-list-item-title> {{ delivery_date.label }}, {{ delivery_date.day_name.substring(0, 3) }} {{ delivery_date.name }} {{ delivery_date.day }} {{locations.pickup.time}} </v-list-item-title>
-                                <v-list-item-subtitle>Appoinment Time</v-list-item-subtitle>
-                            </v-list-item-content>
-                            <v-list-item-action>
-                                <v-icon color="red" @click.stop="generateDates(), (timediag = true)"> mdi-chevron-right </v-icon>
-                            </v-list-item-action>
-                        </v-list-item>
-
-                        <v-list-item id="pickup" dense>
-                            <v-list-item-icon>
-                                <v-icon :color="locations.pickup.value.lat!=0 ? 'green' : 'red'"> mdi-map-marker </v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content>
-                                <v-list-item-title>{{locations.pickup.text}}</v-list-item-title>
-                                <v-list-item-subtitle> Pickup Location of Bill or Receipt</v-list-item-subtitle>
-                            </v-list-item-content>
-                            <v-list-item-action @click.stop="currentMode ='pickup', mapSheet = true">
-                                <v-icon color="red"> mdi-chevron-right </v-icon>
-                            </v-list-item-action>
-                        </v-list-item>
-                        <v-list-item id="dropoff" dense>
-                            <v-list-item-icon>
-                                <v-icon :color="locations.dropoff.value.lat!=0 ? 'green' : 'red'"> mdi-map-marker </v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content>
-                                <v-list-item-title>{{locations.dropoff.text}}</v-list-item-title>
-                                <v-list-item-subtitle>Payment Receipt Delivery Location </v-list-item-subtitle>
-                            </v-list-item-content>
-                            <v-list-item-action @click.stop="currentMode ='dropoff', mapSheet = true">
-                                <v-icon color="red"> mdi-chevron-right </v-icon>
-                            </v-list-item-action>
-                        </v-list-item>
-                    </v-list>
-                </v-card-text>
-                <v-card-actions>
-                    <v-btn outlined text color="blue" @click.stop="reqQoute()" block class="ma-1">Calculate</v-btn>
-                </v-card-actions>
-            </v-card>
-            <v-card v-if="calculated" width="100%">
-                <v-card-title>
-                    <v-btn @click.stop="calculated = false" icon>
-                        <v-icon>mdi-arrow-left</v-icon>
-                    </v-btn> You Quotation</v-card-title>
-                <v-card-text>
-                    <v-simple-table dense>
-                        <template #default>
-                            <tbody>
-                                <tr>
-                                    <td>Service Fee</td>
-                                    <td>{{business.rates.sf|toPHP}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Pickup Fee ({{fees.pickup.distance}} km)</td>
-                                    <td>{{fees.pickup.fees.rider + fees.pickup.fees.platform|toPHP}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Delivery Fee ({{fees.dropoff.distance}} km)</td>
-                                    <td>{{fees.dropoff.fees.rider + fees.dropoff.fees.platform|toPHP}}</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <span class="red--text">
-                                            <strong>Total</strong>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span class="red--text">
-                                            <strong>{{fees.pickup.fees.rider + fees.pickup.fees.platform + business.rates.sf + fees.dropoff.fees.rider + fees.dropoff.fees.platform |toPHP}}</strong>
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </template>
-                    </v-simple-table>
-                </v-card-text>
-                <v-card-actions>
-                    <v-btn outlined text color="blue" @click.stop="bsAppointment = true" block class="ma-1">Request Appointment</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-bottom-sheet>
-        <v-bottom-sheet v-model="timediag" persistent>
-            <v-card>
-                <v-card-title>
-                    <span class="headline">Appointment Time</span>
-                </v-card-title>
-                <v-card-text>
-                    <v-container>
-                        <v-layout wrap>
-                            <v-flex xs12 md6 lg6 sm6>
-                                <v-select v-model="delivery_date" flat :items="dates" return-object label="Delivery Date">
-                                    <template #selection="data"> {{ data.item.label }}, {{ data.item.day_name }} {{ data.item.name }} {{ data.item.day }} </template>
-                                    <template #item="data"> {{ data.item.label }}, {{ data.item.day_name }} {{ data.item.name }} {{ data.item.day }} </template>
-                                </v-select>
-                            </v-flex>
-                            <v-flex xs12 md6 lg6 sm6>
-                                <v-select v-model="locations.pickup.time" flat :items="delivery_date.delivery_time" label="Delivery Time" /> </v-flex>
-                        </v-layout>
-                    </v-container>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn color="blue darken-1" text @click="timediag = false"> Save </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-bottom-sheet>
-        <v-bottom-sheet v-model="billdiag" persistent>
-            <v-card tile>
-                <v-card-title primary-title>Bill Information</v-card-title>
-                <v-card-text>
-                    <v-flex xs12 md12 sm12>
-                        <v-text-field v-model="bill_info.name" label="Account Name" persistent-hint outlined /> </v-flex>
-                    <v-flex xs12 md12 sm12>
-                        <v-text-field v-model="bill_info.accountNo" label="Account No." persistent-hint outlined /> </v-flex>
-                    <v-text-field v-model="bill_info.amount_due" label="Amount Due" type="number" persistent-hint outlined /> </v-flex>
-                </v-card-text>
-                <v-card-actions>
-                    <v-btn tile outlined block color="red" @click="billdiag = false"> Apply Changes </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-bottom-sheet>
-        <v-bottom-sheet v-model="addressDiag" scrollable>
-            <v-card tile>
-                <v-card-title primary-title> {{addrText}} Address </v-card-title>
-                <v-card-text>
-                    <v-flex xs12 md12 sm12>
-                        <v-textarea v-model="currentLocation.address" a hint="Pls type 'NA' if not applicable" label="Address" outlined placeholder="Address" /> </v-flex>
-                    <v-flex xs12 md12 sm12>
-                        <v-text-field v-model="currentLocation.landmark" a hint="Pls type 'NA' if not applicable" label="Floor/Unit/Room No. or Landmark" persistent-hint outlined /> </v-flex>
-                </v-card-text>
-                <v-card-actions>
-                    <v-btn tile outlined block color="red" @click="addressSetter()"> Apply Changes </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-bottom-sheet>
-        <v-bottom-sheet v-model="authDiag">
-            <v-card flat>
-                <v-card-title>Contact Info</v-card-title>
-                <v-card-text>
-                    <fire-ui /> </v-card-text>
-            </v-card>
-        </v-bottom-sheet>
+        <v-row justify="center">
+            <v-bottom-sheet v-model="mapSheet">
+                <v-card>
+                    <v-card-title>Select Location</v-card-title>
+                    <v-card-text>
+                        <v-radio-group v-if="currentMode!='pickup'" v-model="mode">
+                            <v-radio label="Same as Pickup Location" value="same"></v-radio>
+                            <v-radio label="Select Location" value="location"></v-radio>
+                        </v-radio-group>
+                        <div class="mapcontainer" v-if="mode==='location' || currentMode === 'pickup'">
+                            <GMap id="gmap" ref="gMap" :center="mylocation" :options="options" :zoom="15" @center_changed="centerChange">
+                                <GMapMarker ref="gmapmarker" :position="mylocation" :options="{ icon: selectedmarker }" /> </GMap>
+                        </div>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn outlined @click.stop="locationSetter()" text color="blue" block class="ma-1">Next</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-bottom-sheet>
+            <v-bottom-sheet v-model="bsAppointment">
+                <v-card>
+                    <v-card-title>Request Appointment </v-card-title>
+                    <v-card-text>
+                        <v-list nav outlined tile width="100%" dense>
+                            <v-list-item id="needAuth" dense>
+                                <v-list-item-icon>
+                                    <v-icon color="red"> mdi-cellphone </v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-content>
+                                    <v-list-item-title> {{ contact.name }} {{ contact.number }} </v-list-item-title>
+                                    <v-list-item-subtitle> Contact Information </v-list-item-subtitle>
+                                </v-list-item-content>
+                                <v-list-item-action @click.stop="attemptLogin()">
+                                    <v-icon color="red"> mdi-chevron-right </v-icon>
+                                </v-list-item-action>
+                            </v-list-item>
+                            <v-list-item id="billdiv" dense>
+                                <v-list-item-icon>
+                                    <v-icon color="blue"> mdi-account-cash </v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-content>
+                                    <v-list-item-title>{{bill_info.name}} {{bill_info.accountNo}}</v-list-item-title>
+                                    <v-list-item-subtitle>Bill Information </v-list-item-subtitle>
+                                </v-list-item-content>
+                                <v-list-item-action>
+                                    <v-icon @click.stop="billdiag = true" color="red"> mdi-chevron-right </v-icon>
+                                </v-list-item-action>
+                            </v-list-item>
+                            <v-list-item id="pickup" dense>
+                                <v-list-item-icon>
+                                    <v-icon color="blue"> mdi-map-marker </v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-content>
+                                    <v-list-item-title>{{fees.pickup.address}}</v-list-item-title>
+                                    <v-list-item-subtitle> Pickup Address </v-list-item-subtitle>
+                                </v-list-item-content>
+                                <v-list-item-action>
+                                    <v-icon @click.stop="currentLocation = fees.pickup, addrText ='Pickup' , addressDiag = true" color="red"> mdi-chevron-right </v-icon>
+                                </v-list-item-action>
+                            </v-list-item>
+                            <v-list-item id="dropoff" dense>
+                                <v-list-item-icon>
+                                    <v-icon color="blue"> mdi-map-marker </v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-content>
+                                    <v-list-item-title>{{fees.dropoff.address}}</v-list-item-title>
+                                    <v-list-item-subtitle> Delivery Address </v-list-item-subtitle>
+                                </v-list-item-content>
+                                <v-list-item-action>
+                                    <v-icon color="red" @click.stop="currentLocation = fees.dropoff , addrText='Delivery', addressDiag = true"> mdi-chevron-right </v-icon>
+                                </v-list-item-action>
+                            </v-list-item>
+                        </v-list>
+                        <v-simple-table dense>
+                            <template #default>
+                                <tbody>
+                                    <tr>
+                                        <td>Service Fee</td>
+                                        <td>{{business.rates.sf|toPHP}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pickup Fee ({{fees.pickup.distance}} km)</td>
+                                        <td>{{fees.pickup.fees.rider + fees.pickup.fees.platform|toPHP}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Delivery Fee ({{fees.dropoff.distance}} km)</td>
+                                        <td>{{fees.dropoff.fees.rider + fees.dropoff.fees.platform|toPHP}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="red--text">
+                                                <strong>Total</strong>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="red--text">
+                                                <strong>{{fees.pickup.fees.rider + fees.pickup.fees.platform + business.rates.sf + fees.dropoff.fees.rider + fees.dropoff.fees.platform |toPHP}}</strong>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </template>
+                        </v-simple-table>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn outlined text color="blue" @click.stop="preConfirmAppointment()" block class="ma-1">Confirm Appointment</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-bottom-sheet>
+            <v-bottom-sheet v-model="bsQoute">
+                <v-card v-if="!calculated">
+                    <v-card-title>Request a Qoutation </v-card-title>
+                    <v-card-text>
+                        <v-list nav outlined tile width="100%" dense>
+                            <v-list-item id="needDeli">
+                                <v-list-item-icon>
+                                    <v-icon color="blue"> mdi-clock </v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-content>
+                                    <v-list-item-title> {{ delivery_date.label }}, {{ delivery_date.day_name.substring(0, 3) }} {{ delivery_date.name }} {{ delivery_date.day }} {{locations.pickup.time}} </v-list-item-title>
+                                    <v-list-item-subtitle>Appoinment Time</v-list-item-subtitle>
+                                </v-list-item-content>
+                                <v-list-item-action>
+                                    <v-icon color="red" @click.stop="generateDates(), (timediag = true)"> mdi-chevron-right </v-icon>
+                                </v-list-item-action>
+                            </v-list-item>
+                            <v-list-item id="pickup" dense>
+                                <v-list-item-icon>
+                                    <v-icon :color="locations.pickup.value.lat!=0 ? 'green' : 'red'"> mdi-map-marker </v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-content>
+                                    <v-list-item-title>{{locations.pickup.text}}</v-list-item-title>
+                                    <v-list-item-subtitle> Pickup Location of Bill or Receipt</v-list-item-subtitle>
+                                </v-list-item-content>
+                                <v-list-item-action @click.stop="currentMode ='pickup', mapSheet = true">
+                                    <v-icon color="red"> mdi-chevron-right </v-icon>
+                                </v-list-item-action>
+                            </v-list-item>
+                            <v-list-item id="dropoff" dense>
+                                <v-list-item-icon>
+                                    <v-icon :color="locations.dropoff.value.lat!=0 ? 'green' : 'red'"> mdi-map-marker </v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-content>
+                                    <v-list-item-title>{{locations.dropoff.text}}</v-list-item-title>
+                                    <v-list-item-subtitle>Payment Receipt Delivery Location </v-list-item-subtitle>
+                                </v-list-item-content>
+                                <v-list-item-action @click.stop="currentMode ='dropoff', mapSheet = true">
+                                    <v-icon color="red"> mdi-chevron-right </v-icon>
+                                </v-list-item-action>
+                            </v-list-item>
+                        </v-list>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn outlined text color="blue" @click.stop="reqQoute()" block class="ma-1">Calculate</v-btn>
+                    </v-card-actions>
+                </v-card>
+                <v-card v-if="calculated" width="100%">
+                    <v-card-title>
+                        <v-btn @click.stop="calculated = false" icon>
+                            <v-icon>mdi-arrow-left</v-icon>
+                        </v-btn> You Quotation</v-card-title>
+                    <v-card-text>
+                        <v-simple-table dense>
+                            <template #default>
+                                <tbody>
+                                    <tr>
+                                        <td>Service Fee</td>
+                                        <td>{{business.rates.sf|toPHP}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pickup Fee ({{fees.pickup.distance}} km)</td>
+                                        <td>{{fees.pickup.fees.rider + fees.pickup.fees.platform|toPHP}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Delivery Fee ({{fees.dropoff.distance}} km)</td>
+                                        <td>{{fees.dropoff.fees.rider + fees.dropoff.fees.platform|toPHP}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="red--text">
+                                                <strong>Total</strong>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="red--text">
+                                                <strong>{{fees.pickup.fees.rider + fees.pickup.fees.platform + business.rates.sf + fees.dropoff.fees.rider + fees.dropoff.fees.platform |toPHP}}</strong>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </template>
+                        </v-simple-table>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn outlined text color="blue" @click.stop="bsAppointment = true" block class="ma-1">Request Appointment</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-bottom-sheet>
+            <v-bottom-sheet v-model="timediag" persistent>
+                <v-card>
+                    <v-card-title>
+                        <span class="headline">Appointment Time</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container>
+                            <v-layout wrap>
+                                <v-flex xs12 md6 lg6 sm6>
+                                    <v-select v-model="delivery_date" flat :items="dates" return-object label="Delivery Date">
+                                        <template #selection="data"> {{ data.item.label }}, {{ data.item.day_name }} {{ data.item.name }} {{ data.item.day }} </template>
+                                        <template #item="data"> {{ data.item.label }}, {{ data.item.day_name }} {{ data.item.name }} {{ data.item.day }} </template>
+                                    </v-select>
+                                </v-flex>
+                                <v-flex xs12 md6 lg6 sm6>
+                                    <v-select v-model="locations.pickup.time" flat :items="delivery_date.delivery_time" label="Delivery Time" /> </v-flex>
+                            </v-layout>
+                        </v-container>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer />
+                        <v-btn color="blue darken-1" text @click="timediag = false"> Save </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-bottom-sheet>
+            <v-bottom-sheet v-model="billdiag" persistent>
+                <v-card tile>
+                    <v-card-title primary-title>Bill Information</v-card-title>
+                    <v-card-text>
+                        <v-flex xs12 md12 sm12>
+                            <v-text-field v-model="bill_info.name" label="Account Name" persistent-hint outlined /> </v-flex>
+                        <v-flex xs12 md12 sm12>
+                            <v-text-field v-model="bill_info.accountNo" label="Account No." persistent-hint outlined /> </v-flex>
+                        <v-text-field v-model="bill_info.amount_due" label="Amount Due" type="number" persistent-hint outlined /> </v-flex>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn tile outlined block color="red" @click="billdiag = false"> Apply Changes </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-bottom-sheet>
+            <v-bottom-sheet v-model="addressDiag" scrollable>
+                <v-card tile>
+                    <v-card-title primary-title> {{addrText}} Address </v-card-title>
+                    <v-card-text>
+                        <v-flex xs12 md12 sm12>
+                            <v-textarea v-model="currentLocation.address" a hint="Pls type 'NA' if not applicable" label="Address" outlined placeholder="Address" /> </v-flex>
+                        <v-flex xs12 md12 sm12>
+                            <v-text-field v-model="currentLocation.landmark" a hint="Pls type 'NA' if not applicable" label="Floor/Unit/Room No. or Landmark" persistent-hint outlined /> </v-flex>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn tile outlined block color="red" @click="addressSetter()"> Apply Changes </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-bottom-sheet>
+            <v-bottom-sheet v-model="authDiag">
+                <v-card flat>
+                    <v-card-title>Contact Info</v-card-title>
+                    <v-card-text>
+                        <fire-ui></fire-ui>
+                    </v-card-text>
+                </v-card>
+            </v-bottom-sheet>
+        </v-row>
         <v-card class="shopresponsive" v-if="!aptconfimed" width="100%">
             <v-card-subtitle>Request:</v-card-subtitle>
             <v-card-text>
@@ -770,7 +769,6 @@ export default {
             if (this.fees.pickup.address.length === 0 || this.fees.pickup.landmark.length === 0) this.shake('pickup')
             if (this.fees.dropoff.address.length === 0 || this.fees.dropoff.landmark.length === 0) this.shake('dropoff')
             if (this.bill_info.name.length === 0 || this.bill_info.accountNo.length === 0 || this.bill_info.amount_due === 0) this.shake('billdiv')
-         
             if (this.isValid) {
                 this.bsAppointment = false
                 this.isLoading = true
@@ -792,7 +790,7 @@ export default {
             this.isValid = true
             if (this.locations.pickup.value.lat === 0) this.shake('pickup')
             if (this.locations.dropoff.value.lat === 0) this.shake('dropoff')
-               if (this.locations.pickup.time.length === 0) this.shake('needDeli')
+            if (this.locations.pickup.time.length === 0) this.shake('needDeli')
             if (this.isValid) {
                 this.bsQoute = false
                 this.isLoading = true
@@ -940,13 +938,12 @@ export default {
             } else {
                 this.dates = [tomorrow, nextday]
             }
-                for(let i=3;i<=6;i++)
-                    this.dates.push( this.addDays(new Date(), i))
+            for (let i = 3; i <= 6; i++) this.dates.push(this.addDays(new Date(), i))
         },
         addDays(date, days) {
             const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
             const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-            const label = ['Today', 'Tomorrow','Advanced Appointment']
+            const label = ['Today', 'Tomorrow', 'Advanced Appointment']
             const result = new Date(date)
             result.setDate(result.getDate() + days)
             if (days === 2) {
@@ -968,7 +965,7 @@ export default {
                 name: monthNames[result.getMonth()],
                 day: result.getDate(),
                 day_name: dayNames[result.getDay()],
-                label: days<2 ? label[days]  : label[2],
+                label: days < 2 ? label[days] : label[2],
                 delivery_time
             }
         },

@@ -1,20 +1,70 @@
 <template>
     <v-app id="e3">
-        <v-app-bar color="white" class="black--text text-center" fixed app>Jiffy Riders
-            <v-spacer />
-        <!--     <v-btn icon @click.stop="testFN">
-                <v-icon color="blue">mdi-history</v-icon>
+        <v-app-bar color="white" dense fixed app>
+            <v-app-bar-nav-icon color="blue" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+            <v-toolbar-title class="black--text text-center">Jiffy Rider</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn icon @click.stop="statusSheet = true">
+                <v-icon color="green">mdi-check</v-icon>
             </v-btn>
-            <v-btn icon @click.stop="resetJob">
-                <v-icon color="green">mdi-refresh</v-icon>
-            </v-btn>
-            <v-btn icon @click.stop="coordiag = true">
-                <v-icon color="green">mdi-navigation</v-icon>
-            </v-btn> -->
             <v-btn icon @click.stop="Logout()">
                 <v-icon color="red">mdi-logout</v-icon>
             </v-btn>
         </v-app-bar>
+        <v-navigation-drawer v-model="drawer" clipped floating temporary app color="blue" app dark>
+            <v-list dense nav class="py-0">
+                <v-list-item two-line>
+                    <v-list-item-avatar rounded size="35" class="mr-2"> <img src="/icon.png"> </v-list-item-avatar>
+                    <v-list-item-content>
+                        <v-list-item-title>{{profile.firstname}} {{profile.lastname}}</v-list-item-title>
+                        <v-list-item-subtitle>Rider</v-list-item-subtitle>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-divider></v-divider>
+                <v-list-item to="/">
+                    <v-list-item-icon>
+                        <v-icon>mdi-home</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                        <v-list-item-title>Dashboard</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-list-item to="/account">
+                    <v-list-item-icon>
+                        <v-icon>mdi-account</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                        <v-list-item-title>Account</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-list-item to="/vehicles">
+                    <v-list-item-icon>
+                        <v-icon>mdi-motorbike</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                        <v-list-item-title>Vehicle</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+
+                <v-list-item to="/reviews">
+                    <v-list-item-icon>
+                        <v-icon>mdi-account-star-outline</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                        <v-list-item-title>My Ratings</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+
+                <v-list-item to="/support">
+                    <v-list-item-icon>
+                        <v-icon>mdi-account-alert-outline</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                        <v-list-item-title>Support</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list>
+        </v-navigation-drawer>
         <v-content>
             <v-container class="mb-10">
                 <nuxt /> </v-container>
@@ -29,23 +79,53 @@
                 <v-icon>mdi-view-carousel</v-icon>
             </v-btn>
         </v-bottom-navigation>
-        <v-bottom-sheet v-model="coordiag" persistent max-width="400px">
-            <v-card>
-                <v-card-title primary-title>Confirmed Location</v-card-title>
-                <v-card-text>
-                    <div class="mapcontainer">
-                        <GMap id="gmap" ref="gMap" :center="location" :options="{fullscreenControl: false, streetViewControl: false, mapTypeControl: true, zoomControl: true, gestureHandling: 'greedy'}" :zoom="15" @center_changed="centerChange">
-                            <GMapMarker ref="gmapmarker" :position="location" :options="{icon:selectedmarker}"> </GMapMarker>
-                        </GMap>
-                    </div>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="coordiag = false"> Cancel </v-btn>
-                    <v-btn color="blue darken-1" text @click="updateMapLocation"> Save </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-bottom-sheet>
+        <v-row justify="center">
+            <v-bottom-sheet v-model="coordiag" persistent max-width="400px">
+                <v-card>
+                    <v-card-title primary-title>Confirmed Location</v-card-title>
+                    <v-card-text>
+                        <div class="mapcontainer">
+                            <GMap id="gmap" ref="gMap" :center="location" :options="{fullscreenControl: false, streetViewControl: false, mapTypeControl: true, zoomControl: true, gestureHandling: 'greedy'}" :zoom="15" @center_changed="centerChange">
+                                <GMapMarker ref="gmapmarker" :position="location" :options="{icon:selectedmarker}"> </GMapMarker>
+                            </GMap>
+                        </div>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" text @click="coordiag = false"> Cancel </v-btn>
+                        <v-btn color="blue darken-1" text @click="updateMapLocation"> Save </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-bottom-sheet>
+            <v-bottom-sheet v-model="statusSheet">
+                <v-card>
+                    <v-card-title>Set Status</v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-text>
+                        <v-list dense>
+                            <v-list-item @click.stop="statusSheet = false">
+                                <v-list-item-icon>
+                                    <v-icon color="green">mdi-check</v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-content>
+                                    <v-list-item-title>Accepting Job</v-list-item-title>
+                                    <v-list-item-subtitle>Free to accept Job</v-list-item-subtitle>
+                                </v-list-item-content>
+                            </v-list-item>
+                            <v-list-item @click.stop="statusSheet = false">
+                                <v-list-item-icon>
+                                    <v-icon color="red">mdi-close</v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-content>
+                                    <v-list-item-title>Not Accepting Job</v-list-item-title>
+                                    <v-list-item-subtitle>Go Offline - Not Accepting</v-list-item-subtitle>
+                                </v-list-item-content>
+                            </v-list-item>
+                        </v-list>
+                    </v-card-text>
+                </v-card>
+            </v-bottom-sheet>
+        </v-row>
     </v-app>
 </template>
 <script>
@@ -57,6 +137,8 @@ export default {
     middleware: 'auth',
     data() {
         return {
+            drawer: false,
+            statusSheet: false,
             selectedmarker: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAHUSURBVHgB5VU7SwNBEJ7LmZBgMC+UdKKx0MZCG2srwcbCB2glpFDQ3to/IegvSAIWPrBJIySlipUKKqYLaHJ3iWIelzu/DTk8j71H7MQPltmZnflmZ3b3juivQ3BzCIfDI4FAYBvTRV3XR7tBglCCOIP9oFwuv/46QSwWWwfZIaaDNi7vGOlqtZqhfhPE4/EViAy5V6ljE8uVSuXYc4JkMjncarUeMR0ib5Db7fZEvV6vWBd8PG+Q73LIFYyj3lAsa1G/37/D4+JWgPbcQkybd9jpdGYVRXlmSiQSSYmieMWmhgMuwI0kSTPkpQJgzKJnDfJuKYryBJH7sVNBSPGI7BKoFl3n+GguMY4JHiz6GtoybiisRczmEtPFAM+Ifl6i5DmTKYqeX+Nssj19lUz9N2J4XNxDTiQSkwi4oz6ADU3hLdxb7dwW9RyL5B0FHrltAgZUsEce4eRrmwB3ugCRJ3fk4VvsOwEDHtcWxKeDy4emaWmHdRKdFpvNphQKhdhFmOet42D3sftTJw7X/wHgw/U8h1ywkJ/gYJeI/wi/g8kdmqqqG5Alk62Er+emG7nXBFSr1aroNSNknwOVzZnNS6xIHtFoNF6CweAbpheyLOfo3+ALfrSuzJ1F8EsAAAAASUVORK5CYII=',
             coordiag: false,
         }
@@ -97,8 +179,7 @@ export default {
                 lat: coordinates.lat,
                 lng: coordinates.lng
             })
-            if (Date.now() - this.lastUpdate > 120000) {
-                console.log('must update')
+            if (Date.now() - this.lastUpdate > 30000) {
                 let user = new GeoCollectionReference(this.$fireStoreObj().collection('riders'))
                 user.doc(this.user.id).update({
                     coordinates: new this.$fireStoreObj.GeoPoint(coordinates.lat, coordinates.lng)
@@ -109,7 +190,7 @@ export default {
                     })
                 })
             }
-            if (Date.now() - this.lastUpdateArea > 24 * 60 * 60 * 1000) {
+            if (Date.now() - this.lastUpdateArea > 24 * 60 * 60 * 1000 || !this.getArea) {
                 this.$store.dispatch('rider/getArea', {
                     lat: coordinates.lat,
                     lng: coordinates.lng
@@ -143,57 +224,6 @@ export default {
         }
     },
     methods: {
-        testFN() {
-            console.log('Calling FireFunc')
-            this.$fireFunc.httpsCallable('testFN')({
-                name: 'Order Event',
-                title: 'Yey we found your rider!',
-                body: 'Jayjay is on the way to Jolibee Robinsons Now.',
-                image: null,
-                link: '/track/order/12334',
-                token: 'fgi9ElrMTz6qtySR92t2UP:APA91bGqhg-qaBi7cKoH9HaByAqFDF8dVaHshUZDS-1a8_pArVOpRqyE1Bppe1kQFDhtOll5Jyc3r6_E2_aJwfhXR3F2FpQreN4_e_L35h8GXA9hup1sdQNhxj1UmRHyBNOFQGLRQJnh'
-            }).catch(e => {
-                console.log(e)
-            })
-        },
-        resetJob() {
-            const firestore = this.$fireStoreObj()
-            firestore.collection('shop_request').doc('SR-GKGFGQ').update({
-                'd.status': 'placed',
-                'd.rider': 'unassigned',
-                'd.logs': [],
-                'd.timestamp': new Date('2020-07-20 04:00 PM').getTime(),
-                'd.token': 'fgi9ElrMTz6qtySR92t2UP:APA91bGqhg-qaBi7cKoH9HaByAqFDF8dVaHshUZDS-1a8_pArVOpRqyE1Bppe1kQFDhtOll5Jyc3r6_E2_aJwfhXR3F2FpQreN4_e_L35h8GXA9hup1sdQNhxj1UmRHyBNOFQGLRQJnh'
-            })
-            firestore.collection('shop_request').doc('SR-ILD4XU').update({
-                'd.status': 'placed',
-                'd.rider': 'unassigned',
-                'd.logs': [],
-                'd.timestamp': new Date('2020-07-20 04:00 PM').getTime(),
-                'd.token': 'fgi9ElrMTz6qtySR92t2UP:APA91bGqhg-qaBi7cKoH9HaByAqFDF8dVaHshUZDS-1a8_pArVOpRqyE1Bppe1kQFDhtOll5Jyc3r6_E2_aJwfhXR3F2FpQreN4_e_L35h8GXA9hup1sdQNhxj1UmRHyBNOFQGLRQJnh'
-            })
-            firestore.collection('billspay_request').doc('BP-RI205V').update({
-                'd.status': 'placed',
-                'd.rider': 'unassigned',
-                'd.logs': [],
-                'd.timestamp': new Date('2020-07-20 04:00 PM').getTime(),
-                'd.token': 'fgi9ElrMTz6qtySR92t2UP:APA91bGqhg-qaBi7cKoH9HaByAqFDF8dVaHshUZDS-1a8_pArVOpRqyE1Bppe1kQFDhtOll5Jyc3r6_E2_aJwfhXR3F2FpQreN4_e_L35h8GXA9hup1sdQNhxj1UmRHyBNOFQGLRQJnh'
-            })
-            firestore.collection('orders').doc('OR-RV38OO').update({
-                'd.status': 'placed',
-                'd.rider': 'unassigned',
-                'd.logs': [],
-                'd.timestamp': new Date('2020-07-20 04:00 PM').getTime(),
-                'd.token': 'fgi9ElrMTz6qtySR92t2UP:APA91bGqhg-qaBi7cKoH9HaByAqFDF8dVaHshUZDS-1a8_pArVOpRqyE1Bppe1kQFDhtOll5Jyc3r6_E2_aJwfhXR3F2FpQreN4_e_L35h8GXA9hup1sdQNhxj1UmRHyBNOFQGLRQJnh'
-            })
-            firestore.collection('orders').doc('OR-TMUAHJ').update({
-                'd.status': 'placed',
-                'd.rider': 'unassigned',
-                'd.logs': [],
-                'd.timestamp': new Date('2020-07-20 04:00 PM').getTime(),
-                'd.token': 'fgi9ElrMTz6qtySR92t2UP:APA91bGqhg-qaBi7cKoH9HaByAqFDF8dVaHshUZDS-1a8_pArVOpRqyE1Bppe1kQFDhtOll5Jyc3r6_E2_aJwfhXR3F2FpQreN4_e_L35h8GXA9hup1sdQNhxj1UmRHyBNOFQGLRQJnh'
-            })
-        },
         centerChange() {
             const coordinates = this.$refs.gMap.map.getCenter()
             this.$refs.gmapmarker.marker.setPosition({

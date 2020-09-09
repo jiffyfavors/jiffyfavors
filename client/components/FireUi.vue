@@ -44,39 +44,30 @@ export default {
         }
     },
     methods: {
-        updateUser(authUser) {
+        async updateUser(authUser) {
+            this.$store.commit('auth/updateUserDisplayName', this.fullname)
             this.isLoading = true
             const token = this.$store.getters['auth/getFCMToken']
             const firestore = this.$fireStoreObj()
             const ref = new GeoCollectionReference(firestore.collection('users'))
-            firestore.collection('users').doc(authUser.uid).get().then((d) => {
-                if (!d.exists) {
-                    ref.doc(authUser.uid).set({
-                        coordinates: new this.$fireStoreObj.GeoPoint(0, 0),
-                        tokens: [token],
-                        displayName: authUser.displayName,
-                        phoneNumber: authUser.phoneNumber
-                    }).then(() => {
-                        this.$fireAuth.currentUser.updateProfile({
-                            displayName: self.fullname
-                        }).then(() => {
-                            this.isLoading = false
-                        })
-                    })
-                } else {
-                    firestore.collection('users').doc(authUser.uid).update({
-                        'd.displayName': authUser.displayName,
-                        'd.phoneNumber': authUser.phoneNumber,
-                        'd.tokens': this.$fireStoreObj.FieldValue.arrayUnion(token)
-                    }).then(() => {
-                        this.$fireAuth.currentUser.updateProfile({
-                            displayName: self.fullname
-                        }).then(() => {
-                            this.isLoading = false
-                        })
-                    })
-                }
-            })
+            let d = await firestore.collection('users').doc(authUser.uid).get()
+            if (!d.exists) {
+                await ref.doc(authUser.uid).set({
+                    coordinates: new this.$fireStoreObj.GeoPoint(0, 0),
+                    tokens: [token],
+                    promoCodes: [],
+                    displayName: authUser.displayName,
+                    phoneNumber: authUser.phoneNumber
+                })
+            } else {
+                await firestore.collection('users').doc(authUser.uid).update({
+                    'd.displayName': authUser.displayName,
+                    'd.phoneNumber': authUser.phoneNumber,
+                    'd.tokens': this.$fireStoreObj.FieldValue.arrayUnion(token)
+                })
+            }
+            this.isLoading = false
+            return this.isLoading
         },
         loadAuth() {
             if (process.browser) {
@@ -99,10 +90,13 @@ export default {
                             const cred = error.credential
                             return auth.signInWithCredential(cred)
                         },
-                        signInSuccessWithAuthResult(authResult, redirectUrl) {
-                           self.updateUser(authResult.user)
-                           
-                           return false
+                        async signInSuccessWithAuthResult(authResult, redirectUrl) {
+                            return await authResult.user.updateProfile({
+                                displayName: self.fullname
+                            }).then(() => {
+                                return self.updateUser(authResult.user)
+                              
+                            })
                         }
                     }
                 })

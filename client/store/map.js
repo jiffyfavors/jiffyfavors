@@ -9,8 +9,8 @@ export const state = () => ({
   areas: null,
   location: null
 })
-
 export const getters = {
+
   getAreas(state) {
     return state.areas
   },
@@ -18,7 +18,15 @@ export const getters = {
     return state.location
   },
   getStores(state) {
-    return state.merchants
+    let stores = []
+    state.merchants.forEach(m=>{
+      let merch = Object.assign({}, m)
+      if(!merch.hasOwnProperty('tags'))
+        merch.tags = []
+      stores.push(merch)
+
+    })
+    return stores
   },
   getShops(state) {
     return state.shops
@@ -33,7 +41,6 @@ export const getters = {
     return state.isLoading
   }
 }
-
 export const mutations = {
   setLocation(state, data) {
     state.location = data
@@ -45,68 +52,38 @@ export const mutations = {
     state.isLoading = data
   }
 }
-
 export const actions = {
-  getNearbyStore: firestoreAction(async function(
-    { dispatch, bindFirestoreRef },
-    data
-  ) {
+  getNearbyStore: firestoreAction(async function({ dispatch, bindFirestoreRef }, data) {
     const firestore = this.$fireStoreObj()
-
-    const geocollection = new GeoCollectionReference(
-      firestore.collection('merchant')
-    )
-    const query = geocollection
-      .near({
-        center: new this.$fireStoreObj.GeoPoint(data.lat, data.lng),
-        radius: 15
-      })
-      .where('draft', '==', false)
-
+    const geocollection = new GeoCollectionReference(firestore.collection('merchant'))
+    const query = geocollection.near({
+      center: new this.$fireStoreObj.GeoPoint(data.lat, data.lng),
+      radius: 15
+    })
     return await bindFirestoreRef('merchants', query).then(async () => {
       return await dispatch('admin/getArea', data, { root: true })
     })
   }),
-  getNearbyBiller: firestoreAction(async function(
-    { dispatch, bindFirestoreRef },
-    data
-  ) {
+  getNearbyBiller: firestoreAction(async function({ dispatch, bindFirestoreRef }, data) {
     const firestore = this.$fireStoreObj()
-
-    const geocollection = new GeoCollectionReference(
-      firestore.collection('billers')
-    )
-    const query = geocollection
-      .near({
-        center: new this.$fireStoreObj.GeoPoint(data.lat, data.lng),
-        radius: 15
-      })
-      .where('draft', '==', false)
-
+    const geocollection = new GeoCollectionReference(firestore.collection('billers'))
+    const query = geocollection.near({
+      center: new this.$fireStoreObj.GeoPoint(data.lat, data.lng),
+      radius: 15
+    }).where('draft', '==', false)
     return await bindFirestoreRef('billers', query).then(async () => {
       return await dispatch('admin/getArea', data, { root: true })
     })
   }),
-  getNearbyShops: firestoreAction(async function(
-    { dispatch, bindFirestoreRef },
-    data
-  ) {
+  getNearbyShops: firestoreAction(async function({ dispatch, bindFirestoreRef }, data) {
     const firestore = this.$fireStoreObj()
-
-    const geocollection = new GeoCollectionReference(
-      firestore.collection('shops')
-    )
-    const query = geocollection
-      .near({
-        center: new this.$fireStoreObj.GeoPoint(data.lat, data.lng),
-        radius: 15
-      })
-      .where('draft', '==', false)
-
+    const geocollection = new GeoCollectionReference(firestore.collection('shops'))
+    const query = geocollection.near({
+      center: new this.$fireStoreObj.GeoPoint(data.lat, data.lng),
+      radius: 15
+    }).where('draft', '==', false)
     return await bindFirestoreRef('shops', query).then(async () => {
       return await dispatch('admin/getArea', data, { root: true })
     })
   }),
-
-
 }

@@ -502,7 +502,7 @@ export default {
             return total
         }
     }
-}
+};
 </script>
 <style scoped>
         .bestseller {

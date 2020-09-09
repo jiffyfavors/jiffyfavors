@@ -1,10 +1,13 @@
 {
   "projects": {
-    "default": "sound-aileron-279710"
+    "jiffyfavors": "sound-aileron-279710"
   },
   "targets": {
     "sound-aileron-279710": {
       "hosting": {
+        "areamgt": [
+          "area-manager"
+        ],
         "client": [
           "sound-aileron-279710"
         ],
@@ -13,7 +16,8 @@
         ],
         "admin": [
           "jf-admin"
-        ]
+        ],
+        "merchant": ["fudtripmerchant"]
       }
     }
   }
