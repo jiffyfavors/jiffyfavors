@@ -1,0 +1,25 @@
+{
+  "hosting": {
+    "target":"admin",
+    "predeploy":"npm run build && rm -rf public/admin/* && mkdir -p public/admin && cp -a ./dist/* ./public/admin",
+    "public": "./public/admin",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+     "headers": [{
+      "source" : "**",
+      "headers" : [{
+        "key" : "Cache-Control",
+        "value" : "public, max-age=3600, s-max-age=14400"
+      }]
+    }]
+  }
+}
