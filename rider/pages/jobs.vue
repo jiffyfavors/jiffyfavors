@@ -119,14 +119,14 @@ export default {
             return this.jobs.completed
         }
     },
-    beforeMount() {
-        if (this.user) 
-            this.$store.dispatch('auth/getProfile')
-        //     this.$store.dispatch('rider/getAvailableJobs')
-        //     this.$store.dispatch('rider/getCompeletedJobs')
-        //     this.$store.dispatch('rider/getJobs')
-        // }
-    },
+    // beforeMount() {
+    //     if (this.user) 
+    //         this.$store.dispatch('auth/getProfile')
+    //     //     this.$store.dispatch('rider/getAvailableJobs')
+    //     //     this.$store.dispatch('rider/getCompeletedJobs')
+    //     //     this.$store.dispatch('rider/getJobs')
+    //     // }
+    // },
     methods: {},
 };
 </script>

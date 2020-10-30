@@ -178,6 +178,7 @@ export default {
         }
     },
     mounted() {
+        this.$store.commit('map/clearDeliveryFees')
         if ('geolocation' in navigator) {
             navigator.geolocation.getCurrentPosition(() => {
                 this.$getLocation({

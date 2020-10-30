@@ -10,6 +10,7 @@ export default {
   layout: 'menu',
    mounted(){
     	this.$fireAnalytics.logEvent('page_view')
+    	
     }
 };
 </script>

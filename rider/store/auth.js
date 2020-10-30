@@ -8,9 +8,12 @@ export const state = () => ({
 })
 export const getters = {
   getFCMToken(state) {
-    if (state.authUser && state.authUser.fcmToken)
-      return state.authUser.fcmToken
+    if (state.authUser && state.authUser.fcmToken) return state.authUser.fcmToken
     else return state.fcmToken
+  },
+  isProfileNull(state) {
+    if (state.profile) return false
+    return true
   },
   getStatus(state) {
     return state.profile ? state.profile.status : 'NA'
@@ -69,20 +72,18 @@ export const actions = {
       })
     }
   },
-  getProfile: firestoreAction(async function({ bindFirestoreRef, state }) {
-    const firestore = this.$fireStoreObj()
-    var profile = new GeoCollectionReference(firestore.collection('riders'))
-    const rider = profile.doc(state.authUser.id)
-    return await bindFirestoreRef('profile', rider)
+  getProfile: firestoreAction(function({ bindFirestoreRef, state }) {
+    console.log('getting profile', state.authUser.id)
+    return bindFirestoreRef('profile', new GeoCollectionReference(this.$fireStoreObj().collection('riders')).doc(state.authUser.id))
   }),
   onAuthStateChanged({ dispatch, commit }, { authUser }) {
     if (!authUser) {
       commit('RESET_STORE')
       return
-    }
+    } 
+
     commit('SET_AUTH_USER', {
-      authUser
-    })
-    dispatch('getProfile')
+        authUser
+      })
   }
 }

@@ -25,6 +25,10 @@ module.exports = {
         type: 'image/png',
         sizes: '192x192'
       }]
+    },
+     workbox:{
+      dev:false,
+      importScripts:['./firebase-auth-sw.js']
     }
   },
   head: {
@@ -78,7 +82,11 @@ module.exports = {
         fcmPublicVapidKey: 'BMoNvS6eRymi6FLK_wyxXPs5AMR_s67WiBSZMM1Re3-Amh3dpP_BwhbMZqMkUiNc6HjXQwjxJBTF83m1yjGka7s'
       },
       services: {
-        functions: true,
+       functions:true,
+        // functions: {
+        //   emulatorPort: 5001,
+        //   location:'us-central1'
+        // },
         messaging: true,
         storage: true,
         firestore: {

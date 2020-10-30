@@ -37,7 +37,7 @@
                         <v-list-item-title>Account</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
-                <v-list-item to="/vehicles">
+               <!--  <v-list-item to="/vehicles">
                     <v-list-item-icon>
                         <v-icon>mdi-motorbike</v-icon>
                     </v-list-item-icon>
@@ -45,7 +45,6 @@
                         <v-list-item-title>Vehicle</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
-
                 <v-list-item to="/reviews">
                     <v-list-item-icon>
                         <v-icon>mdi-account-star-outline</v-icon>
@@ -54,7 +53,6 @@
                         <v-list-item-title>My Ratings</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
-
                 <v-list-item to="/support">
                     <v-list-item-icon>
                         <v-icon>mdi-account-alert-outline</v-icon>
@@ -62,7 +60,7 @@
                     <v-list-item-content>
                         <v-list-item-title>Support</v-list-item-title>
                     </v-list-item-content>
-                </v-list-item>
+                </v-list-item> -->
             </v-list>
         </v-navigation-drawer>
         <v-content>
@@ -169,8 +167,11 @@ export default {
             return this.$store.getters['rider/getLocation']
         }
     },
+    beforeMount(){
+          this.$store.dispatch('auth/getProfile')
+    },
     mounted() {
-        if (!this.user) return
+ 
         this.$watchLocation({
             enableHighAccuracy: true,
             timeout: Infinity

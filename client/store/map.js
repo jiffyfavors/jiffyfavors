@@ -7,10 +7,13 @@ export const state = () => ({
   isHide: false,
   isLoading: false,
   areas: null,
-  location: null
+  location: null,
+  delivery_fees:[],
 })
 export const getters = {
-
+  getDeliveryFees(state){
+    return state.delivery_fees
+  },
   getAreas(state) {
     return state.areas
   },
@@ -50,6 +53,12 @@ export const mutations = {
   },
   setLoading(state, data) {
     state.isLoading = data
+  },
+  addDeliveryFees(state, data){
+    state.delivery_fees.push(data)
+  },
+  clearDeliveryFees(state){
+    state.delivery_fees = []
   }
 }
 export const actions = {

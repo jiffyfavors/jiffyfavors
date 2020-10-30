@@ -1,25 +1,15 @@
-const admin = require("firebase-admin");
-admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
+
+const fs = require('fs');
+const path = require('path');
+const FUNCTIONS_FOLDER = './endpoints';
+fs.readdirSync(path.resolve(__dirname, FUNCTIONS_FOLDER)).forEach(file => {
+    if (file.endsWith('.js')) {
+        const fileBaseName = file.slice(0, -3);
+        if (!process.env.FUNCTION_NAME) {
+             let rfile = require(`${FUNCTIONS_FOLDER}/${fileBaseName}`);
+            Object.keys(rfile).forEach(fn => {
+                exports[fn] = rfile[fn]
+            })
+        }
+    }
 });
-const messaging = admin.messaging();
-const ssr = require('./ssr');
-const callables = require('./callables');
-const triggers = require('./triggers');
-
-exports.nuxtssr = ssr.nuxtssr;
-
-//callables
-exports.sendFCMbyToken = callables.sendFCMbyToken;
-exports.sendFCMbyTopic = callables.sendFCMbyTopic;
-exports.createMerchantAccount = callables.createMerchantAccount;
-exports.createNewRider = callables.createNewRider;
-exports.subscribeToTopic = callables.subscribeToTopic;
-exports.unsubscribeFromTopic = callables.unsubscribeFromTopic;
-exports.CustomClaims = callables.CustomClaims;
-
-//triggers
-exports.riderBalance = triggers.riderBalance
-exports.newOrder = triggers.newOrder
-exports.newBillsPayRequest = triggers.newBillsPayRequest
-exports.newShopRequest = triggers.newShopRequest

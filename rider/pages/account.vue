@@ -63,45 +63,7 @@
                     </v-list>
                 </v-card-text>
             </v-card>
-            <v-card class="ma-2">
-                <v-card-title primary-title>Please comply the following</v-card-title>
-                <v-card-text>
-                    <v-list dense>
-                        <v-list-item>
-                            <v-list-item-icon>
-                                <v-icon color="red">mdi-close</v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content>
-                                <v-list-item-title>Driver's License</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item>
-                            <v-list-item-icon>
-                                <v-icon color="red">mdi-close</v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content>
-                                <v-list-item-title>NBI Clearance</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item>
-                            <v-list-item-icon>
-                                <v-icon color="red">mdi-close</v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content>
-                                <v-list-item-title>Tax Identification Number(TIN)</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
-                           <v-list-item>
-                            <v-list-item-icon>
-                                <v-icon color="red">mdi-close</v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-content>
-                                <v-list-item-title>Atleast 1 Approved Vehicle</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
-                    </v-list>
-                </v-card-text>
-            </v-card>
+            
         </v-flex>
         <v-bottom-sheet v-model="loginSheet">
             <v-card tile>

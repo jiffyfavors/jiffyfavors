@@ -1,7 +1,9 @@
 <template>
     <v-card flat id="create" class="overflow-hidden">
         <v-app-bar absolute color="#43a047" dark fixed app>
-             <v-btn icon to="/stores"><v-icon>mdi-arrow-left-bold</v-icon></v-btn>
+            <v-btn icon to="/stores">
+                <v-icon>mdi-arrow-left-bold</v-icon>
+            </v-btn>
             <v-toolbar-title>{{ merchant.business_name }} - {{ merchant.branch }} Menu</v-toolbar-title>
             <template v-slot:extension>
                 <v-tabs v-model="tab" background-color="transparent" color="basil" centered show-arrows>
@@ -210,163 +212,101 @@
                     <span class="headline">{{ formFoodTitle }}</span>
                 </v-card-title>
                 <v-card-text id="foodcard" style="height: 500px;">
-                    <v-img v-if="editedFoodIndex>-1" min-width="200px" max-height="200px" min-height="50px" class="elevation-6" :src="editFoodItem.img" @click.stop="imagediag= true" contain />
-                    <v-container>
-                        <v-layout wrap>
-                            <v-flex xs12 md8 sm6>
-                                <v-text-field v-model="editFoodItem.name" label="Food Name" /> </v-col>
-                            </v-flex>
-                            <v-flex xs6 md4 sm6>
-                                <v-text-field v-model="editFoodItem.base_price" type="Number" label="Based Price" /> </v-col>
-                            </v-flex>
-                            <v-flex xs6 md4 sm6>
-                                <v-select v-model="editFoodItem.categories" :items="categories" label="Category" item-value="name" item-text="name" multiple>
-                                    <template v-slot:selection="{ item, index }">
-                                        <v-chip small dense close @click:close="editFoodItem.categories.splice(index,1)" class="white--text" color="blue">
-                                            <span>{{ item.name }}</span>
-                                        </v-chip>
-                                    </template>
-                                </v-select>
-                            </v-flex>
-                            <v-flex xs12>
-                                <wysiwyg v-model="editFoodItem.desc" placeholder="Food Description" label="Description"> </wysiwyg>
-                            </v-flex>
-                            <v-flex xs12>
-                                <v-select v-model="editFoodItem.options" :items="options" label="Select Option" return-object item-text="name" multiple>
-                                    <template v-slot:selection="{ item, index }">
-                                        <v-chip small dense close @click:close="editFoodItem.options.splice(index,1)" class="white--text" color="blue">
-                                            <span>{{ item.name }}</span>
-                                        </v-chip>
-                                    </template>
-                                    <v-icon slot="append-outer"  @click.stop="editFoodItem.options.push({name:'New Option',min:1,max:1,values:[]})"  color="green">mdi-plus</v-icon>
-                                </v-select>
-                            </v-flex>
-                          
-                            <v-flex xs12>
-                                <v-tabs dense color="blue" centered>
-                                    <v-tab v-for="(option,i) in editFoodItem.options" :key="i"> {{ option.name }} </v-tab>
-                                    <v-tab-item v-for="(option,i) in editFoodItem.options" :key="i">
-                                        <v-card flat tile>
-                                            <v-card-text>
-                                                <v-row>
-                                                    <v-col cols="6" sm="6" md="6">
-                                                        <v-text-field v-model="option.name" label="Name" /> </v-col>
-                                                    <v-col cols="2" sm="2" md="2">
-                                                        <v-text-field v-model="option.min" type="number" label="Min" /> </v-col>
-                                                    <v-col cols="2" sm="3" md="2">
-                                                        <v-text-field v-model="option.max" type="number" label="Max" /> </v-col>
-                                                    <v-col cols="2" sm="2" md="2">
-                                                        <v-icon small color="red" @click.stop="editFoodItem.options.splice(i,1)"> mdi-minus </v-icon>
-                                                    </v-col>
-                                                </v-row>
-                                                <v-simple-table dense fixed-header>
-                                                    <template v-slot:default>
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="text-left"> Name </th>
-                                                                <th class="text-left"> Price </th>
-                                                                <th class="text-left">
-                                                                    <v-icon small color="blue" v-if="option.values.length<=0" @click.stop="option.values.push({name:'',price:0})"> mdi-plus </v-icon>
-                                                                </th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr v-for="(val, index) in option.values" :key="index">
-                                                                <td>
-                                                                    <input v-model="val.name" type="text" width="100px"> </td>
-                                                                <td>
-                                                                    <input v-model="val.price" type="number" size="10" style="width:70px"> </td>
-                                                                <td>
-                                                                    <v-icon small color="red" @click.stop="option.values.splice(index,1)"> mdi-minus </v-icon>
-                                                                    <v-icon small color="blue" v-if="index==option.values.length - 1" @click.stop="option.values.push({name:'',price:0})"> mdi-plus </v-icon>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </template>
-                                                </v-simple-table>
-                                            </v-card-text>
-                                        </v-card>
-                                    </v-tab-item>
-                                </v-tabs>
-                            </v-flex>
-                        </v-layout>
-                        <!--      <v-row>
-                            <v-col cols="8" sm="8" md="8">
-                                <v-text-field v-model="editFoodItem.name" label="Food Name" /> </v-col>
-                            <v-col cols="4" sm="4" md="4">
-                                <v-text-field v-model="editFoodItem.base_price" type="Number" label="Base Price" /> </v-col>
-                            <v-col cols="12" sm="12" md="12">
-                                <wysiwyg v-model="editFoodItem.desc" placehold er="Description" label="Description"> </wysiwyg>
-                            </v-col>
-                            <v-col cols="12" xs="12" sm="6" md="4">
-                                <v-select v-model="editFoodItem.categories" :items="categories" label="Category" item-value="name" item-text="name" multiple>
-                                    <template v-slot:selection="{ item, index }">
-                                        <v-chip small dense close @click:close="editFoodItem.categories.splice(index,1)" class="white--text" color="blue">
-                                            <span>{{ item.name }}</span>
-                                        </v-chip>
-                                    </template>
-                                </v-select>
-                            </v-col>
-                            <v-col cols="12" xs="12" sm="6" md="4">
-                                <v-select v-model="editFoodItem.options" :items="options" label="Select Option" return-object item-text="name" multiple>
-                                    <template v-slot:selection="{ item, index }">
-                                        <v-chip small dense close @click:close="editFoodItem.options.splice(index,1)" class="white--text" color="blue">
-                                            <span>{{ item.name }}</span>
-                                        </v-chip>
-                                    </template>
-                                </v-select>
-                            </v-col>
-                            <v-col cols="6" sm="6" md="4">
-                                <v-icon @click.stop="editFoodItem.options.push({name:'New Option',min:1,max:1,values:[]})" color="blue">mdi-plus</v-icon>
-                            </v-col>
-                            <v-col cols="12" sm="12" md="12">
-                                <v-tabs dense color="blue" centered>
-                                    <v-tab v-for="(option,i) in editFoodItem.options" :key="i"> {{ option.name }} </v-tab>
-                                    <v-tab-item v-for="(option,i) in editFoodItem.options" :key="i">
-                                        <v-card flat tile>
-                                            <v-card-text>
-                                                <v-row>
-                                                    <v-col cols="6" sm="6" md="6">
-                                                        <v-text-field v-model="option.name" label="Name" /> </v-col>
-                                                    <v-col cols="2" sm="2" md="2">
-                                                        <v-text-field v-model="option.min" type="number" label="Min" /> </v-col>
-                                                    <v-col cols="2" sm="3" md="2">
-                                                        <v-text-field v-model="option.max" type="number" label="Max" /> </v-col>
-                                                    <v-col cols="2" sm="2" md="2">
-                                                        <v-icon small color="red" @click.stop="editFoodItem.options.splice(i,1)"> mdi-minus </v-icon>
-                                                    </v-col>
-                                                </v-row>
-                                                <v-simple-table dense fixed-header>
-                                                    <template v-slot:default>
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="text-left"> Name </th>
-                                                                <th class="text-left"> Price </th>
-                                                                <th class="text-left">
-                                                                    <v-icon small color="blue" v-if="option.values.length<=0" @click.stop="option.values.push({name:'',price:0})"> mdi-plus </v-icon>
-                                                                </th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr v-for="(val, index) in option.values" :key="index">
-                                                                <td>
-                                                                    <input v-model="val.name" type="text" width="100px"> </td>
-                                                                <td>
-                                                                    <input v-model="val.price" type="number" size="10" style="width:70px"> </td>
-                                                                <td>
-                                                                    <v-icon small color="red" @click.stop="option.values.splice(index,1)"> mdi-minus </v-icon>
-                                                                    <v-icon small color="blue" v-if="index==option.values.length - 1" @click.stop="option.values.push({name:'',price:0})"> mdi-plus </v-icon>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </template>
-                                                </v-simple-table>
-                                            </v-card-text>
-                                        </v-card>
-                                    </v-tab-item>
-                                </v-tabs>
-                            </v-col>
-                        </v-row> --></v-container>
+                    <v-tabs v-model="tabInfo" centered slider-color="blue">
+                        <v-tab href="#tab-info">Food Info</v-tab>
+                        <v-tab href="#tab-option">Options</v-tab>
+                    </v-tabs>
+                    <v-tabs-items v-model="tabInfo">
+                        <v-tab-item value="tab-info">
+                            <v-img v-if="editedFoodIndex>-1" min-width="200px" max-height="200px" min-height="50px" class="elevation-6" :src="editFoodItem.img" @click.stop="imagediag= true" contain />
+                            <v-container>
+                                <v-layout wrap>
+                                    <v-flex xs12 md8 sm6>
+                                        <v-text-field v-model="editFoodItem.name" label="Food Name" /> </v-col>
+                                    </v-flex>
+                                    <v-flex xs6 md4 sm6>
+                                        <v-text-field v-model="editFoodItem.base_price" type="Number" label="Based Price" /> </v-col>
+                                    </v-flex>
+                                    <v-flex xs6 md4 sm6>
+                                        <v-select v-model="editFoodItem.categories" :items="categories" label="Category" item-value="name" item-text="name" multiple>
+                                            <template v-slot:selection="{ item, index }">
+                                                <v-chip small dense close @click:close="editFoodItem.categories.splice(index,1)" class="white--text" color="blue">
+                                                    <span>{{ item.name }}</span>
+                                                </v-chip>
+                                            </template>
+                                        </v-select>
+                                    </v-flex>
+                                    <v-flex xs12>
+                                        <wysiwyg v-model="editFoodItem.desc" placeholder="Food Description" label="Description"> </wysiwyg>
+                                    </v-flex>
+                                </v-layout>
+                            </v-container>
+                        </v-tab-item>
+                        <v-tab-item value="tab-option">
+                            <v-container>
+                                <v-layout wrap>
+                                    <v-flex xs12>
+                                        <v-select v-model="editFoodItem.options" :items="options" label="Select Option" return-object item-text="name" multiple>
+                                            <template v-slot:selection="{ item, index }">
+                                                <v-chip small dense close @click:close="editFoodItem.options.splice(index,1)" class="white--text" color="blue">
+                                                    <span>{{ item.name }}</span>
+                                                </v-chip>
+                                            </template>
+                                            <v-icon slot="append-outer" @click.stop="editFoodItem.options.push({name:'New Option',min:1,max:1,values:[]})" color="green">mdi-plus</v-icon>
+                                        </v-select>
+                                    </v-flex>
+                                    <v-flex xs12>
+                                        <v-tabs dense color="blue" centered>
+                                            <v-tab v-for="(option,i) in editFoodItem.options" :key="i"> {{ option.name }} </v-tab>
+                                            <v-tab-item v-for="(option,i) in editFoodItem.options" :key="i">
+                                                <v-card flat tile>
+                                                    <v-card-text>
+                                                        <v-row>
+                                                            <v-col cols="6" sm="6" md="6">
+                                                                <v-text-field v-model="option.name" label="Name" /> </v-col>
+                                                            <v-col cols="2" sm="2" md="2">
+                                                                <v-text-field v-model="option.min" type="number" label="Min" /> </v-col>
+                                                            <v-col cols="2" sm="3" md="2">
+                                                                <v-text-field v-model="option.max" type="number" label="Max" /> </v-col>
+                                                            <v-col cols="2" sm="2" md="2">
+                                                                <v-icon small color="red" @click.stop="editFoodItem.options.splice(i,1)"> mdi-minus </v-icon>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-simple-table dense fixed-header>
+                                                            <template v-slot:default>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="text-left"> Name </th>
+                                                                        <th class="text-left"> Price </th>
+                                                                        <th class="text-left">
+                                                                            <v-icon small color="blue" v-if="option.values.length<=0" @click.stop="option.values.push({name:'',price:0})"> mdi-plus </v-icon>
+                                                                        </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr v-for="(val, index) in option.values" :key="index">
+                                                                        <td>
+                                                                            <input v-model="val.name" type="text" width="100px"> </td>
+                                                                        <td>
+                                                                            <input v-model="val.price" type="number" size="10" style="width:70px"> </td>
+                                                                        <td>
+                                                                            <v-icon small color="red" @click.stop="option.values.splice(index,1)"> mdi-minus </v-icon>
+                                                                            <v-icon small color="blue" v-if="index==option.values.length - 1" @click.stop="option.values.push({name:'',price:0})"> mdi-plus </v-icon>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </template>
+                                                        </v-simple-table>
+                                                    </v-card-text>
+                                                </v-card>
+                                            </v-tab-item>
+                                        </v-tabs>
+                                    </v-flex>
+                                </v-layout>
+                            </v-container>
+                        </v-tab-item>
+                    </v-tabs-items>
+                    </v-container>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
@@ -388,6 +328,7 @@ export default {
     layout: 'menu',
     data: () => {
         return {
+            tabInfo: 'tab-info',
             applyImg: false,
             actionSheet: false,
             current_cat: {},

@@ -1,72 +1,80 @@
 <template>
     <v-layout>
-        <v-container>
-            <v-layout justify-center align-center class="text-xs-center">
-                <v-flex xs12 v-if="activeBtn === 1">
-                    <v-container style="position: relative;top: 13%;" class="text-xs-cente mx-auto">
-                        <v-card flat max-width="100%" class="mx-auto">
-                            <v-card-title primary-title>
-                                <h4>Login</h4> </v-card-title>
-                            <v-card-text>
-                                <fire-ui mode="login" :payload={}></fire-ui>
-                            </v-card-text>
-                        </v-card>
-                    </v-container>
-                </v-flex>
-                <v-flex xs12 v-if="activeBtn === 0">
-                    <v-container style="position: relative;top: 13%;" class="text-xs-center">
-                        <v-card flat>
-                            <v-card-title primary-title>
-                                <h4>Become a Rider</h4> </v-card-title>
-                            <v-card-text v-html="riderText"></v-card-text>
-                        </v-card>
-                    </v-container>
-                </v-flex>
-                <v-flex xs12 v-if="activeBtn === 2">
-                    <v-container style="position: relative;top: 13%;" class="text-xs-center">
-                        <v-card flat>
-                            <v-card-title primary-title>
-                                <h4>Rider Registration</h4> </v-card-title>
-                            <v-card-text>
-                                <v-form ref="form" v-model="valid" v-show="!ifvalidated">
-                                    <v-layout wrap>
-                                        <v-flex xs12>
-                                            <v-select dense :items="cities" :rules="[v => !!v || 'City is required']" v-model="city" label="Where are you located?" item-text="data.name" item-value="id"></v-select>
-                                        </v-flex>
-                                        <v-flex xs6>
-                                            <v-text-field v-model="firstname" :rules="[v => !!v || 'Firstname is required']" required name="First Name" label="First Name"></v-text-field>
-                                        </v-flex>
-                                        <v-flex xs6>
-                                            <v-text-field name="Last Name" v-model="lastname" required :rules="[v => !!v || 'Lastname is required']" label="Last Name"></v-text-field>
-                                        </v-flex>
-                                        <v-flex xs6>
-                                            <v-text-field name="Birthdate" v-model="birthdate" :rules="[v => !!v || 'Birthday is required']" required label="Birthdate" type="date"></v-text-field>
-                                        </v-flex>
-                                        <v-flex xs6>
-                                            <v-select :items="[{name:'Male', value:'M'}, {name:'Female', value:'F'}]" item-text="name" item-value="value" v-model="gender" label="Gender" :rules="[v => !!v || 'Gender is required']"></v-select>
-                                        </v-flex>
-                                        <v-flex xs12>
-                                            <v-card>
-                                                <v-card-title>Create Login Account</v-card-title>
-                                                <v-card-text>
-                                                    <v-layout wrap>
-                                                        <v-flex xs12>
-                                                            <v-text-field dense v-model="email" type="email" :rules="emailRules" placeholder="Email Address" outlined></v-text-field>
-                                                        </v-flex>
-                                                        <v-flex xs12>
-                                                            <v-text-field dense v-model="phoneNumber" type="number" prefix="+63" placeholder="Phone Number" :rules="phonRules" outlined></v-text-field>
-                                                        </v-flex>
-                                                        <v-flex xs6>
-                                                            <v-text-field dense v-model="pass1" type="password" placeholder="Password" :rules="[  v => !!v || 'Password is required', (pass1 === pass2) || 'Password must match' ]" outlined></v-text-field>
-                                                        </v-flex>
-                                                        <v-flex xs6>
-                                                            <v-text-field dense v-model="pass2" type="password" placeholder="Confirm Password" :rules="[  v => !!v || 'Password is required', (pass1 === pass2) || 'Password must match' ]" outlined></v-text-field>
-                                                        </v-flex>
-                                                    </v-layout>
-                                                </v-card-text>
-                                            </v-card>
-                                        </v-flex>
-                                        <!--                                  <v-flex xs12>
+        <loading :active.sync="loading" loader="bars" :is-full-page="true" color="blue" />
+        <v-app-bar color="white" dense fixed app>
+            <v-btn color="red" text v-if="activeBtn>1" @click.stop="activeBtn = 0">Go Back </v-btn>
+            <v-toolbar-title class="black--text text-center">Jiffy Rider</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn color="red" text v-if="activeBtn<2" @click.stop="activeBtn = 2"> Apply Now </v-btn>
+        </v-app-bar>
+        <v-content>
+            <v-container class="mb-10">
+                <v-layout justify-center align-center class="text-xs-center">
+                    <v-flex xs12 v-if="activeBtn === 1">
+                        <v-container style="position: relative;top: 13%;" class="text-xs-cente mx-auto">
+                            <v-card flat max-width="100%" class="mx-auto">
+                                <v-card-title primary-title>
+                                    <h4>Login</h4> </v-card-title>
+                                <v-card-text>
+                                    <fire-ui mode="login" :payload={}></fire-ui>
+                                </v-card-text>
+                            </v-card>
+                        </v-container>
+                    </v-flex>
+                    <v-flex xs12 v-if="activeBtn === 0">
+                        <v-container style="position: relative;top: 13%;" class="text-xs-center">
+                            <v-card flat>
+                                <v-card-title primary-title>
+                                    <h4>Become a Rider</h4> </v-card-title>
+                                <v-card-text v-html="riderText"></v-card-text>
+                            </v-card>
+                        </v-container>
+                    </v-flex>
+                    <v-flex xs12 v-if="activeBtn === 2">
+                        <v-container style="position: relative;top: 13%;" class="text-xs-center">
+                            <v-card flat>
+                                <v-card-title primary-title>
+                                    <h4>Rider Registration</h4> </v-card-title>
+                                <v-card-text>
+                                    <v-form ref="form" v-model="valid" v-show="!ifvalidated">
+                                        <v-layout wrap>
+                                            <v-flex xs12>
+                                                <v-select dense :items="cities" :rules="[v => !!v || 'City is required']" v-model="city" label="Where are you located?" item-text="data.name" item-value="id"></v-select>
+                                            </v-flex>
+                                            <v-flex xs6>
+                                                <v-text-field v-model="firstname" :rules="[v => !!v || 'Firstname is required']" required name="First Name" label="First Name"></v-text-field>
+                                            </v-flex>
+                                            <v-flex xs6>
+                                                <v-text-field name="Last Name" v-model="lastname" required :rules="[v => !!v || 'Lastname is required']" label="Last Name"></v-text-field>
+                                            </v-flex>
+                                            <v-flex xs6>
+                                                <v-text-field name="Birthdate" v-model="birthdate" :rules="[v => !!v || 'Birthday is required']" required label="Birthdate" type="date"></v-text-field>
+                                            </v-flex>
+                                            <v-flex xs6>
+                                                <v-select :items="[{name:'Male', value:'M'}, {name:'Female', value:'F'}]" item-text="name" item-value="value" v-model="gender" label="Gender" :rules="[v => !!v || 'Gender is required']"></v-select>
+                                            </v-flex>
+                                            <v-flex xs12>
+                                                <v-card>
+                                                    <v-card-title>Create Login Account</v-card-title>
+                                                    <v-card-text>
+                                                        <v-layout wrap>
+                                                            <v-flex xs12>
+                                                                <v-text-field dense v-model="email" type="email" :rules="emailRules" placeholder="Email Address" outlined></v-text-field>
+                                                            </v-flex>
+                                                            <v-flex xs12>
+                                                                <v-text-field dense v-model="phoneNumber" type="number" prefix="+63" placeholder="Phone Number" :rules="phonRules" outlined></v-text-field>
+                                                            </v-flex>
+                                                            <v-flex xs6>
+                                                                <v-text-field dense v-model="pass1" type="password" placeholder="Password" :rules="[  v => !!v || 'Password is required', (pass1 === pass2) || 'Password must match' ]" outlined></v-text-field>
+                                                            </v-flex>
+                                                            <v-flex xs6>
+                                                                <v-text-field dense v-model="pass2" type="password" placeholder="Confirm Password" :rules="[  v => !!v || 'Password is required', (pass1 === pass2) || 'Password must match' ]" outlined></v-text-field>
+                                                            </v-flex>
+                                                        </v-layout>
+                                                    </v-card-text>
+                                                </v-card>
+                                            </v-flex>
+                                            <!--                                  <v-flex xs12>
                                             <v-card class="mt-2">
                                                 <v-card-title>Vehicle Information</v-card-title>
                                                 <v-card-text>
@@ -87,35 +95,37 @@
                                                 </v-card-text>
                                             </v-card>
                                         </v-flex> --></v-layout>
-                                    <v-card-actions>
-                                        <v-btn primary large @click.stop="validate" block>Next</v-btn>
-                                    </v-card-actions>
-                                </v-form>
-                              <!--   <fire-ui v-show="ifvalidated" mode="register" :payload="registration_payload"></fire-ui> -->
-                            </v-card-text>
-                        </v-card>
-                    </v-container>
-                </v-flex>
-            </v-layout>
-        </v-container>
-        <v-bottom-navigation :value="activeBtn" grow color="teal" fixed>
-            <v-btn @click.stop="activeBtn=0">
-                <span>Become a Rider</span>
-                <v-icon>mdi-account</v-icon>
-            </v-btn>
-            <v-btn @click.stop="activeBtn=1">
-                <span>Login</span>
-                <v-icon>mdi-key</v-icon>
-            </v-btn>
-            <v-btn @click.stop="activeBtn=2">
+                                        <v-card-actions>
+                                            <v-btn primary color="success" large @click.stop="validate" block>Submit</v-btn>
+                                        </v-card-actions>
+                                    </v-form>
+                                    <!--   <fire-ui v-show="ifvalidated" mode="register" :payload="registration_payload"></fire-ui> -->
+                                </v-card-text>
+                            </v-card>
+                        </v-container>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+            <v-bottom-navigation v-if="activeBtn<2" :value="activeBtn" grow color="teal" fixed>
+                <v-btn @click.stop="activeBtn=0">
+                    <span>Become a Rider</span>
+                    <v-icon>mdi-account</v-icon>
+                </v-btn>
+                <v-btn @click.stop="activeBtn=1">
+                    <span>Login</span>
+                    <v-icon>mdi-key</v-icon>
+                </v-btn>
+                <!--  <v-btn @click.stop="activeBtn=2">
                 <span>Register</span>
                 <v-icon>mdi-motorbike</v-icon>
-            </v-btn>
-        </v-bottom-navigation>
+            </v-btn> --></v-bottom-navigation>
+        </v-content>
     </v-layout>
 </template>
 <script>
 import FireUi from '~/components/FireUi.vue'
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/vue-loading.css'
 export default {
     layout: 'menu',
     middleware({
@@ -128,41 +138,12 @@ export default {
         }
     },
     components: {
-        FireUi
+        FireUi,
+        Loading
     },
     computed: {
-        registration_payload() {
-            return {
-                profile: {
-                    firstname: this.firstname,
-                    lastname: this.lastname,
-                    gender: this.gender,
-                    birthdate: this.birthdate
-                },
-                area: this.city,
-                contact: this.phoneNumber,
-                email: this.email,
-                vehicle_info: this.vehicle_info,
-                password: this.pass1
-            }
-        },
-        isAuth() {
-            return this.$store.getters['auth/isAuth']
-        },
-    },
-    mounted() {
-        localStorage.removeItem('vuex')
-        var d = new Date();
-        var year = d.getFullYear();
-        var month = d.getMonth();
-        var day = d.getDate();
-        this.birthdate = new Date(year - 16, month, day).toISOString().substring(0, 10);
-    },
-    data() {
-        return {
-            pass1: '',
-            pass2: '',
-            riderText: `<p><strong>Ano ang mga requirements para maging isang Jiffy Rider?</strong></p>
+        riderText() {
+            return `<p><strong>Ano ang mga requirements para maging isang Jiffy Rider?</strong></p>
 <ul>
 <li>Driver's License(Pro and Non-Pro). Pro for Tricycle Drivers. </li>
 <li>NBI Clearance</li>
@@ -200,7 +181,53 @@ export default {
 <p><strong>Ano ang Wallet Balance?</strong><br />&nbsp; &nbsp; &nbsp; &nbsp;Ito ang balanse sa inyong account na nababawasan or madagdagan depende sa iba't ibang sitwasyon. Ito ang halaga na pwede mong maitransfer sa iyong GCASH Account para maiwidraw sa iyong GCASH MasterCard ATM.</p>
 <p>&nbsp; &nbsp; &nbsp; Ito ay madagdagan kada topup sa inyong Balance. Ito ay kinakailangan upang makatanggap ka ng booking o jobs sa platform. Madadagdagan rin ito kapag nagpadala kmi ng inyong incentives at bonus.</p>
 <p>&nbsp; &nbsp; &nbsp;Ito ay mababawasan ng maliit na halaga paunti unti kada successful booking. Ito ay magsisilbing commission sa bawat booking na maibibigay ng platform.</p>
-<p>&nbsp;</p>`,
+<p>&nbsp;</p>`
+        },
+        registration_payload() {
+            return {
+                // profile: {
+                //     firstname: this.firstname,
+                //     lastname: this.lastname,
+                //     gender: this.gender,
+                //     birthdate: this.birthdate
+                // },
+                // area: this.city,
+                // phone: this.phoneNumber,
+                // email: this.email,
+                // vehicle_info: this.vehicle_info,
+                // password: this.pass1
+                profile: {
+                    firstname: this.firstname,
+                    lastname: this.lastname,
+                    gender: this.gender,
+                    birthdate: this.birthdate
+                },
+                area: this.city,
+                contact: this.phoneNumber,
+                email: this.email,
+                vehicle_info: this.vehicle_info,
+                password: this.pass1
+            }
+        },
+        isAuth() {
+            return this.$store.getters['auth/isAuth']
+        },
+    },
+    beforeMount() {
+        localStorage.removeItem('vuex')
+    },
+    mounted() {
+        var d = new Date();
+        var year = d.getFullYear();
+        var month = d.getMonth();
+        var day = d.getDate();
+        this.birthdate = new Date(year - 16, month, day).toISOString().substring(0, 10);
+    },
+    data() {
+        return {
+            loading: false,
+            pass1: '',
+            pass2: '',
             activeBtn: 0,
             phoneNumber: '',
             ifvalidated: false,
@@ -208,7 +235,7 @@ export default {
             firstname: '',
             lastname: '',
             gender: 'M',
-            birthdate: '',
+            birthdate: '01/30/1992',
             city: '',
             cities: [],
             vehicle_info: {
@@ -251,13 +278,17 @@ export default {
         validate() {
             this.ifvalidated = this.$refs.form.validate()
             if (this.ifvalidated) {
-               this.$fireFunc.httpsCallable('createNewRider')(this.registration_payload).then(() => {
-                 this.$fireAuth.signInWithEmailAndPassword(this.preSignUp.contact.email, this.pass1).catch(error=>{
-                  this.snackbar = true
-                    this.color = 'error'
-                    this.text = 'Account Not Exist'
-               })
-            });
+                this.loading = true
+                this.$fireFunc.httpsCallable('createNewRider')(this.registration_payload).then((res) => {
+                    console.log(res)
+                    this.$fireAuth.signInWithEmailAndPassword(this.registration_payload.email, this.registration_payload.password).catch(error => {
+                        this.snackbar = true
+                        this.color = 'error'
+                        this.text = 'Account Not Exist'
+                    }).then(() => {
+                        this.loading = false
+                    });
+                });
             }
         }
     },
@@ -270,9 +301,7 @@ export default {
         },
         isAuth(val) {
             if (val) {
-                this.$store.dispatch('auth/getProfile').then(() => {
-                    this.$router.push('/')
-                })
+                this.$router.push('/')
             }
         }
     }

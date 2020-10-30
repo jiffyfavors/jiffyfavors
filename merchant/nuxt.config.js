@@ -110,10 +110,11 @@ module.exports = {
       onFirebaseHosting: true,
       services: {
         messaging: true,
-        functions:{
-          location:'us-central-1',
-          emulatorPort: 5001
-        },
+        functions:true,
+        // functions:{
+        //   location:'us-central-1',
+        //   emulatorPort: 5001
+        // },
         storage: true,
         firestore: {
           memoryOnly: false,

@@ -1,6 +1,35 @@
 const functions = require("firebase-functions");
 const { GeoCollectionReference } = require("geofirestore");
+
+let is_admin_initialized = false
+let is_messaging_inititalized = false
+let admin = null
+let messaging = null
+
+function initAdmin() {
+    if (is_admin_initialized) return
+    admin = require("firebase-admin");
+    admin.initializeApp({
+        credential: admin.credential.applicationDefault(),
+    });
+    is_admin_initialized = true
+}
+
+function initMessaging() {
+    if (is_admin_initialized && !is_messaging_inititalized)
+    {
+        messaging = admin.messaging();
+        is_messaging_inititalized = true
+
+    }else{
+        initAdmin();
+        initMessaging();
+    }
+
+}
+
 exports.riderBalance = functions.firestore.document("riders/{doc_id}/balances/{balance_id}").onCreate((snap, context) => {
+    initAdmit();
     let balance = snap.data().amount
     if (snap.data().type === 'top-up') {
         let remit = balance * 0.7
@@ -24,9 +53,11 @@ exports.riderBalance = functions.firestore.document("riders/{doc_id}/balances/{b
         msg: 'Function Done'
     }
 });
+
 exports.newOrder = functions.firestore.document("orders/{doc_id}").onCreate((snap, context) => {
     let area = snap.data().d.area;
     let merch_id = snap.data().d.order.merchant.id;
+    initAdmin();
     admin.firestore().collection("merchant").doc(merch_id).get().then(async (store) => {
         if (store.data().d.hasOwnProperty("managed_by")) {
             let ids = store.data().d.managed_by;
@@ -67,6 +98,7 @@ exports.newOrder = functions.firestore.document("orders/{doc_id}").onCreate((sna
                     });
                 }));
             }));
+            initMessaging();
             messaging.sendAll(messages);
         }
     });
@@ -142,6 +174,7 @@ async function notifyAdmin(type, id, area) {
             fcm_options: {},
             topic: ridertopic,
         });
+        initMessaging()
         return await messaging.sendAll(messages).then((response) => {
             console.log(response);
             console.log(response.successCount + " messages were sent successfully");
