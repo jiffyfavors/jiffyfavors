@@ -1,0 +1,17 @@
+[debug] [2020-08-14T00:34:33.311Z] ----------------------------------------------------------------------
+[debug] [2020-08-14T00:34:33.313Z] Command:       /usr/bin/node /usr/bin/firebase deploy --only hosting:client
+[debug] [2020-08-14T00:34:33.314Z] CLI Version:   8.6.0
+[debug] [2020-08-14T00:34:33.314Z] Platform:      linux
+[debug] [2020-08-14T00:34:33.314Z] Node Version:  v14.5.0
+[debug] [2020-08-14T00:34:33.315Z] Time:          Fri Aug 14 2020 08:34:33 GMT+0800 (Philippine Standard Time)
+[debug] [2020-08-14T00:34:33.315Z] ----------------------------------------------------------------------
+[debug] [2020-08-14T00:34:33.315Z] 
+[debug] [2020-08-14T00:34:33.326Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-08-14T00:34:33.326Z] > authorizing via signed-in user
+[debug] [2020-08-14T00:34:33.327Z] [iam] checking project sound-aileron-279710 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2020-08-14T00:34:33.330Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/sound-aileron-279710:testIamPermissions  
+ {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2020-08-14T00:34:34.638Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 14 Aug 2020 00:34:34 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","server-timing":"gfet4t7; dur=824","alt-svc":"h3-29=\":443\"; ma=2592000,h3-27=\":443\"; ma=2592000,h3-T050=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-08-14T00:34:34.640Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/sound-aileron-279710  
+ 
+[debug] [2020-08-14T00:34:35.581Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Fri, 14 Aug 2020 00:34:35 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-27=\":443\"; ma=2592000,h3-T050=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}

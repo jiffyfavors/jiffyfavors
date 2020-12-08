@@ -1,0 +1,56 @@
+{
+  "FireUi": {
+    "description": "Auto imported from components/FireUi.vue"
+  },
+  "LazyFireUi": {
+    "description": "Auto imported from components/FireUi.vue"
+  },
+  "Loading": {
+    "description": "Auto imported from components/Loading.vue"
+  },
+  "LazyLoading": {
+    "description": "Auto imported from components/Loading.vue"
+  },
+  "Nav": {
+    "description": "Auto imported from components/Nav.vue"
+  },
+  "LazyNav": {
+    "description": "Auto imported from components/Nav.vue"
+  },
+  "OrderSummary": {
+    "description": "Auto imported from components/OrderSummary.vue"
+  },
+  "LazyOrderSummary": {
+    "description": "Auto imported from components/OrderSummary.vue"
+  },
+  "Permission": {
+    "description": "Auto imported from components/Permission.vue"
+  },
+  "LazyPermission": {
+    "description": "Auto imported from components/Permission.vue"
+  },
+  "RestoCard": {
+    "description": "Auto imported from components/RestoCard.vue"
+  },
+  "LazyRestoCard": {
+    "description": "Auto imported from components/RestoCard.vue"
+  },
+  "ServiceCard": {
+    "description": "Auto imported from components/ServiceCard.vue"
+  },
+  "LazyServiceCard": {
+    "description": "Auto imported from components/ServiceCard.vue"
+  },
+  "StoreCard": {
+    "description": "Auto imported from components/StoreCard.vue"
+  },
+  "LazyStoreCard": {
+    "description": "Auto imported from components/StoreCard.vue"
+  },
+  "TokenStatus": {
+    "description": "Auto imported from components/TokenStatus.vue"
+  },
+  "LazyTokenStatus": {
+    "description": "Auto imported from components/TokenStatus.vue"
+  }
+}

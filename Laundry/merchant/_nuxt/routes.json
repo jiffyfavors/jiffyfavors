@@ -1,0 +1,44 @@
+[
+  {
+    "name": "login",
+    "path": "/login",
+    "component": "/home/akocberting/Desktop/Laundry/merchant/pages/login.vue",
+    "chunkName": "pages/login",
+    "_name": "_44d623db"
+  },
+  {
+    "name": "orders",
+    "path": "/orders",
+    "component": "/home/akocberting/Desktop/Laundry/merchant/pages/orders.vue",
+    "chunkName": "pages/orders",
+    "_name": "_224af03a"
+  },
+  {
+    "name": "stores",
+    "path": "/stores",
+    "component": "/home/akocberting/Desktop/Laundry/merchant/pages/stores.vue",
+    "chunkName": "pages/stores",
+    "_name": "_0e8fcba0"
+  },
+  {
+    "name": "voucher",
+    "path": "/voucher",
+    "component": "/home/akocberting/Desktop/Laundry/merchant/pages/voucher.vue",
+    "chunkName": "pages/voucher",
+    "_name": "_055f6a20"
+  },
+  {
+    "name": "menu-id",
+    "path": "/menu/:id",
+    "component": "/home/akocberting/Desktop/Laundry/merchant/pages/menu/_id/index.vue",
+    "chunkName": "pages/menu/_id/index",
+    "_name": "_39f832ea"
+  },
+  {
+    "name": "index",
+    "path": "/",
+    "component": "/home/akocberting/Desktop/Laundry/merchant/pages/index.vue",
+    "chunkName": "pages/index",
+    "_name": "_7b2e80c4"
+  }
+]
