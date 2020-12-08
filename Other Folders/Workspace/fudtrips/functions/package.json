@@ -1,0 +1,45 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "10"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.11.0",
+    "@nuxtjs/firebase": "^6.0.1",
+    "@nuxtjs/proxy": "^2.0.0",
+    "@nuxtjs/pwa": "^3.0.0-0",
+    "firebase": "^7.15.1",
+    "firebase-admin": "^8.10.0",
+    "firebase-functions": "^3.6.1",
+    "firebaseui": "^4.5.1",
+    "geofirestore": "^3.6.0",
+    "intersection-observer": "^0.11.0",
+    "js-cookie": "^2.2.1",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.map": "^4.6.0",
+    "lodash.shuffle": "^4.2.0",
+    "nuxt-gmaps": "^1.2.3",
+    "nuxt-start": "^2.13.1",
+    "uuid": "^8.1.0",
+    "vue-browser-geolocation": "^1.8.0",
+    "vue-loading-overlay": "^3.3.2",
+    "vue-select-image": "^1.9.0",
+    "vue-social-sharing": "^3.0.0-beta.11",
+    "vue2-dropzone": "^3.6.0",
+    "vuefire": "^2.2.2",
+    "vuex-persistedstate": "^3.0.1",
+    "vuexfire": "^3.2.2"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^0.2.0"
+  },
+  "private": true
+}

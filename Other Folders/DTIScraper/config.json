@@ -1,0 +1,22 @@
+[
+  {
+    "name"       : "salon",
+    "script"     : "./index.js",
+    "args"       : "salon"
+  },
+  {
+    "name"       : "massage",
+    "script"     : "./index.js",
+    "args"       : "massage"
+  },
+  {
+    "name"       : "laundry",
+    "script"     : "./index.js",
+    "args"       : "laundry"
+  },
+  {
+    "name"       : "estate",
+    "script"     : "./index.js",
+    "args"       : "estate"
+  }
+]

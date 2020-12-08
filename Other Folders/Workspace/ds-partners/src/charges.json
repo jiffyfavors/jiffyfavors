@@ -1,0 +1,81 @@
+[
+  {
+    "code": "ELN",
+    "locations": [
+      {
+        "name": "Hotel in Corong corong area",
+        "rate": 0
+      },
+      {
+        "name": "Hotel in El Nido Town Center",
+        "rate": 100
+      },
+      {
+        "name": "Hotel in Lio or Villa Libertad Area",
+        "rate": 600
+      },
+      {
+        "name": "El Nido Cove Resort",
+        "rate": 800
+      },
+      {
+        "name": "Nacpan & Bucana Area",
+        "rate": 1500
+      },
+      {
+        "name": "Duli Beach",
+        "rate": 2000
+      },
+      {
+        "name": "San Fernando & Sibaltan Area",
+        "rate": 2500
+      }
+    ]
+  },
+  {
+    "code": "ELN",
+    "locations": [
+      {
+        "name": "PPS Airport",
+        "rate": 0
+      },
+      {
+        "name": "PPS Hotel",
+        "rate": 0
+      },
+      {
+        "name": "Astoria Palawan",
+        "rate": 0
+      }
+    ]
+  },
+  {
+    "code": "SAB",
+    "locations": [
+      {
+        "name": "Sabang Beach",
+        "rate": 0
+      },
+      {
+        "name": "Sabang Wharf",
+        "rate": 0
+      },
+      {
+        "name": "Daluyon Beach & Mountain Resort",
+        "rate": 100
+      },
+      {
+        "name": "Sheridan Beach Resort & Spa",
+        "rate": 100
+      }
+    ]
+  },
+  {
+  	"code":"SVC",
+  	"locations":[
+  		{"name":"Hotel In Poblacion, San Vicente",
+  		"rate":0},
+  		{"name":"San Vicente Van Terminal",
+  		"rate":0}]
+  }
+]Wwjdwsmd

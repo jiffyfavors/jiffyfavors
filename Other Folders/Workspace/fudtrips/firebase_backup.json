@@ -1,0 +1,37 @@
+{
+  "functions": {
+    "source": "functions/dist/client",
+    "predeploy": [
+      "npm --prefix  ./client run build && rm -rf functions/dist/client/nuxt && cp -r ./client/nuxt/ functions/dist/client/nuxt && cp client/nuxt.config.js functions/dist/client"
+    ]
+  },
+  "hosting": [
+    {
+      "target": "client",
+      "predeploy": [
+        "rm -rf client/public/dist/client/* && mkdir -p public/dist/client/_nuxt && cp -a client/nuxt/dist/client/. public/dist/client/_nuxt && cp -a ./client/static/. public/dist/client/"
+      ],
+      "public": "public/dist/client",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "redirects": [
+        {
+          "source": "/distance/:payload*",
+          "destination": "https://maps.googleapis.com/maps/api/distancematrix/json/distance/:payload",
+          "type": 301
+        }
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "function": "nuxtssr",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=3600, s-maxage=14400"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

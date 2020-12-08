@@ -1,0 +1,70 @@
+{
+  "name": "ds-palawan",
+  "version": "0.1.0",
+  "description": "Diskubre Palawan",
+  "author": "Gilbert C. Palmeras",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve --port 8081 --host 0.0.0.0",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "core-js": "^2.6.5",
+    "js-cookie": "^2.2.1",
+    "qrcode.vue": "^1.7.0",
+    "register-service-worker": "^1.6.2",
+    "vue": "^2.6.10",
+    "vue-analytics": "^5.17.2",
+    "vue-lodash": "^2.0.2",
+    "vue-router": "^3.1.2",
+    "vuetify": "^2.0.0",
+    "vuex": "^3.1.1",
+    "vuex-persistedstate": "^2.5.4"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.5.5",
+    "@fortawesome/fontawesome-free": "^5.10.1",
+    "@vue/cli-plugin-babel": "^3.10.0",
+    "@vue/cli-plugin-eslint": "^3.10.0",
+    "@vue/cli-plugin-pwa": "^3.10.0",
+    "@vue/cli-service": "^3.10.0",
+    "babel-eslint": "^10.0.1",
+    "deepmerge": "^4.0.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "fibers": "^4.0.1",
+    "sass": "^1.22.9",
+    "sass-loader": "^7.2.0",
+    "vue-cli-plugin-vuetify": "^0.6.3",
+    "vue-loader": "^15.8.3",
+    "vue-template-compiler": "^2.6.10",
+    "vuetify-loader": "^1.2.2"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {
+      "no-console": "off"
+    },
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
+}

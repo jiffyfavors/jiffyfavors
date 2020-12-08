@@ -1,0 +1,79 @@
+{
+  "menu": [
+    {
+      "category": "All Day Breakfast",
+      "items": [
+        {
+          "name": "Top Silog",
+          "base_price": 99,
+          "options": [
+            {
+              "name": "Drinks",
+              "min": 1,
+              "max": 1,
+              "values": [
+                {
+                  "name": "Coffee",
+                  "price": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Milk Tea",
+      "items": [
+        {
+          "name": "Bubble Milk Tea",
+          "base_price": 140
+        },
+        {
+          "name": "Frappe",
+          "base_price": 140,
+          "options": [
+            {
+              "name": "Sizes",
+              "min": 1,
+              "max": 1,
+              "values": [
+                {
+                  "name": "Venti",
+                  "price": 50
+                },
+                {
+                  "name": "Regular",
+                  "price": 0
+                },
+                {
+                  "name": "Grande",
+                  "price": 75
+                }
+              ]
+            },
+            {
+              "name": "Add Ons",
+              "min": 1,
+              "max": 1,
+              "values": [
+                {
+                  "name": "No Add On",
+                  "price": 0
+                },
+                {
+                  "name": "Egg Pudding",
+                  "price": 16
+                },
+                {
+                  "name": "Pearls",
+                  "price": 16
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

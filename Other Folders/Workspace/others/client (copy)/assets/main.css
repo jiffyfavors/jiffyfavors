@@ -1,0 +1,46 @@
+#e3,
+#e3 .container {
+  overflow: hidden;
+  z-index: 0;
+  background: none;
+  padding: 5px !important;
+}
+
+#e3 {
+  background: none
+}
+
+.v-input--selection-controls {
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+
+  .bestseller {
+    float: right;
+    padding-right: 20px;
+    padding-left: 20px;
+    color: white !important;
+    background-color: #f44336;
+    font-size: 16px !important;
+    margin-top: 10px;
+    margin-left: 10px;
+    text-align: center;
+    border-top-right-radius: 0px !important;
+    border-top-left-radius: 0px !important;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+  }
+  
+
+.shopresponsive {
+  position: fixed;
+  width: 100%;
+  display: block;
+  margin: 0 auto;
+  bottom: 0;
+  left: 0;
+  right: 0
+}
