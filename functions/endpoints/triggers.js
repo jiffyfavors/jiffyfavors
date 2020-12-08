@@ -54,6 +54,40 @@ exports.riderBalance = functions.firestore.document("riders/{doc_id}/balances/{b
     }
 });
 
+exports.newAreaApplication = functions.firestore.document("area_application/{doc_id}").onCreate((snap, context) => {
+    let data = snap.data();
+    let msg = {
+            name: "Area Manager Application",
+            data: {},
+            notification: {
+                title:'Area Manager Signup',
+                body: data.fullname +" apply for "+ data.city.name
+            },
+            android: {},
+            webpush: {
+                headers: {
+                    Urgency: "high",
+                },
+                notification: {
+                    title: "Area Manager Signup",
+                    body: data.fullname +" apply for "+ data.city.name,
+                    icon: "/icon-96px.png",
+                    badge: "/badge.png"
+                },
+                fcm_options: {
+                    link: "/",
+                },
+            },
+            apns: {
+                fcm_options: {},
+            },
+            fcm_options: {},
+            topic: "admin"
+        }
+        initMessaging();
+        messaging.send(msg);
+
+});
 exports.newOrder = functions.firestore.document("orders/{doc_id}").onCreate((snap, context) => {
     let area = snap.data().d.area;
     let merch_id = snap.data().d.order.merchant.id;

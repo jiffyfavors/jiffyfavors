@@ -45,24 +45,36 @@
                 <v-dialog width="500" v-model="applyModal">
                     <v-card>
                         <v-card-title>Area Manager Application</v-card-title>
-                        <v-card-text>
-                            <v-form ref="form" v-model="valid">
+                        <v-form ref="form" v-model="valid">
+                            <v-card-text>
                                 <v-layout wrap>
                                     <v-flex xs12>
-                                        <v-select dense :items="cities" :rules="[v => !!v || 'City is required']" v-model="city" label="Where are you located?" item-text="data.name" item-value="id"></v-select>
+                                        <v-select dense prepend-icon="mdi-map-marker" :items="cities" :rules="[v => !!v || 'City is required']" v-model="city" label="Where are you located?" item-text="data.name" item-value="id" return-object></v-select>
                                     </v-flex>
                                     <v-flex xs12>
-                                        <v-text-field v-model="Fullname" :rules="[v => !!v || 'Fullname is required']" required name="Fullname" label="Fullname"></v-text-field>
+                                        <v-text-field prepend-icon="mdi-account-circle-outline" v-model="Fullname" :rules="[v => !!v || 'Fullname is required']" required name="Fullname" label="Fullname"></v-text-field>
                                     </v-flex>
                                     <v-flex xs12>
-                                        <v-text-field dense v-model="email" type="email" :rules="emailRules" placeholder="Email Address" ></v-text-field>
+                                        <v-text-field dense prepend-icon="mdi-gmail" v-model="email" type="email" :rules="emailRules" placeholder="Email Address"></v-text-field>
                                     </v-flex>
                                     <v-flex xs12>
-                                        <v-text-field dense v-model="phoneNumber" type="number" prefix="+63" placeholder="Phone Number" :rules="phonRules" ></v-text-field>
+                                        <v-text-field prepend-icon="mdi-phone" dense v-model="phoneNumber" required type="number" prefix="+63" placeholder="Phone Number" :rules="phonRules"></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs12>
+                                        <v-text-field prefix="@" v-model="messenger" :rules="[v => !!v || 'Messenger username is required']" prepend-icon="mdi-facebook-messenger" required name="Messenger" label="Messenger"></v-text-field>
+                                    </v-flex>
+                                    <v-flex xs12>
+                                        <v-alert type="info">Details will be
+                                            <strong>downloaded</strong> after you submit your application.</v-alert>
                                     </v-flex>
                                 </v-layout>
-                            </v-form>
-                        </v-card-text>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn text @click.stop="applyModal = false">Cancel</v-btn>
+                                <v-btn text @click.stop="validate">Apply Now</v-btn>
+                            </v-card-actions>
+                        </v-form>
                     </v-card>
                 </v-dialog>
             </v-container>
@@ -96,6 +108,9 @@ export default {
             snackbar: false,
             text: '',
             cities: [],
+            city: '',
+            Fullname: '',
+            messenger: '',
             color: '',
             timeout: 3500,
             emailRules: [
@@ -108,7 +123,7 @@ export default {
             ],
             phonRules: [
                 v => !!v || 'Phone number is required',
-                v => (v && v.length == 10) || 'Name must be 10 characters',
+                v => (v && v.length == 10) || 'Phone number must be 10 characters',
             ],
         }
     },
@@ -134,6 +149,7 @@ export default {
         },
     },
     mounted() {
+        if (this.$route.query.action === 'Apply') this.applyModal = true;
         this.$store.commit('auth/setLastUpdate', 0)
         this.$store.commit('auth/setIsManager', true)
         if (this.isAuth) {
@@ -141,6 +157,29 @@ export default {
         }
     },
     methods: {
+        validate() {
+            this.valid = this.$refs.form.validate()
+            if (this.valid) {
+                let payload = {
+                    city: {
+                        id: this.city.id,
+                        name: this.city.data.name
+                    },
+                    fullname: this.Fullname,
+                    email: this.email,
+                    number: '+63' + this.phoneNumber,
+                    messenger: this.messenger
+                }
+                this.$fireStoreObj().collection('area_application').add(payload).then(() => {
+                    this.applyModal = false;
+                    alert('Your application is submitted');
+                    var link = document.createElement('a');
+                    link.href = '/area_mgr_faq.pdf';
+                    link.download = '/area_mgr_faq.pdf';
+                    link.dispatchEvent(new MouseEvent('click'));
+                })
+            }
+        },
         getCities() {
             this.cities = []
             this.$fireStoreObj().collection('areas').get().then((snap) => {
