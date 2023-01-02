@@ -41,7 +41,7 @@
     "vuexfire": "^3.2.2"
   },
   "devDependencies": {
-    "@nuxtjs/vuetify": "^1.11.2",
+    "@nuxtjs/vuetify": "^1.12.3",
     "firebase-functions-test": "^0.2.0"
   },
   "private": true
